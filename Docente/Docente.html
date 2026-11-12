@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo del Docente - Politécnico Salesiano Cristo Rey</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts: Merriweather & Inter para lectura limpia en tablas -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --inst-blue: #205493;
+            --inst-dark: #0b1d3a;
+            --inst-accent: #0d6efd;
+            --card-radius: 20px;
+        }
+
+        body {
+            font-family: 'Merriweather', serif;
+            background: linear-gradient(135deg, #071326, #0b1d3a, #102a4c, #1a365d);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            background-image: 
+                radial-gradient(circle, rgba(147, 197, 253, 0.14) 10px, transparent 12px),
+                radial-gradient(circle, rgba(96, 165, 250, 0.1) 25px, transparent 28px),
+                radial-gradient(circle, rgba(191, 219, 254, 0.08) 40px, transparent 45px);
+            background-size: 320px 320px, 480px 480px, 640px 640px;
+            background-position: 0 0, 120px 160px, 220px 60px;
+            animation: floatBokeh 24s linear infinite;
+        }
+
+        @keyframes floatBokeh {
+            0% { background-position: 0 0, 120px 160px, 220px 60px; }
+            100% { background-position: 320px 320px, 480px 480px, 640px 640px; }
+        }
+
+        .font-ui {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .dashboard-container {
+            max-width: 1220px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Barra Superior Fija */
+        .navbar-custom {
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 12px 0;
+        }
+
+        /* Botón destacado "Hablar con IA" en el menú superior */
+        .btn-ia-navbar {
+            background: linear-gradient(135deg, #00f2fe 0%, #0d6efd 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 7px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 0 0 18px rgba(0, 242, 254, 0.4);
+            transition: all 0.25s ease;
+        }
+        .btn-ia-navbar:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.75);
+            color: #ffffff;
+        }
+
+        /* Tarjetas de sección con gran espacio interno */
+        .section-card {
+            background: #ffffff;
+            border-radius: var(--card-radius);
+            border: none;
+            padding: 34px 38px;
+            margin-bottom: 36px;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .section-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #205493, #0d6efd, #38bdf8);
+        }
+
+        .section-header-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 20px;
+            margin-bottom: 26px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .section-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-right: 14px;
+        }
+
+        /* Tarjetas de Resumen Rápido (KPIs) */
+        .kpi-card {
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 18px;
+            padding: 22px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            height: 100%;
+            transition: transform 0.25s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-4px);
+        }
+        .kpi-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            flex-shrink: 0;
+        }
+
+        /* Barra de Navegación por Secciones (Pills) */
+        .nav-filter-bar {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 50px;
+            padding: 8px;
+            display: inline-flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 34px;
+        }
+
+        .nav-filter-btn {
+            background: transparent;
+            color: #e2e8f0;
+            border: none;
+            border-radius: 50px;
+            padding: 9px 18px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .nav-filter-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+        }
+
+        .nav-filter-btn.active {
+            background: #0d6efd;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.45);
+        }
+
+        /* Pestaña especial de IA en el menú inferior de filtros */
+        .nav-filter-btn.ia-pill {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(13, 110, 253, 0.35));
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            color: #38bdf8;
+        }
+        .nav-filter-btn.ia-pill:hover {
+            background: linear-gradient(135deg, #00f2fe, #0d6efd);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.5);
+        }
+
+        /* Tablas más aireadas y legibles */
+        .table-spacious th {
+            background-color: #f8fafc !important;
+            color: #334155;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.76rem;
+            letter-spacing: 0.5px;
+            padding: 15px 12px !important;
+            border-bottom: 2px solid #cbd5e1 !important;
+        }
+
+        .table-spacious td {
+            padding: 16px 12px !important;
+            vertical-align: middle;
+        }
+
+        .table-spacious tbody tr {
+            transition: background-color 0.2s ease;
+        }
+        .table-spacious tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Botones P / A / T / E con separación limpia */
+        .pate-group {
+            display: inline-flex;
+            gap: 8px;
+        }
+        .pate-group .btn {
+            width: 40px;
+            height: 36px;
+            border-radius: 8px !important;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .btn-institutional {
+            background-color: #205493;
+            color: white;
+        }
+        .btn-institutional:hover {
+            background-color: #1a446d;
+            color: white;
+        }
+
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #28a745;
+        }
+
+        .profile-link {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 7px 16px;
+            border-radius: 20px;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .profile-link:hover {
+            background-color: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: #93c5fd;
+        }
+
+        .consolidation-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-bottom: 3px solid #205493;
+            border-radius: 16px;
+            padding: 18px 12px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .consolidation-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 22px rgba(32, 84, 147, 0.12);
+        }
+
+        .pulse-badge {
+            animation: softPulse 2s infinite;
+        }
+        @keyframes softPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* PANTALLA DE CARGA CIRCULAR AZUL */
+        #blueLoadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 29, 58, 0.84);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+        #blueLoadingOverlay.hidden-loader {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .modern-blue-spinner {
+            width: 66px;
+            height: 66px;
+            border: 6px solid rgba(147, 197, 253, 0.25);
+            border-top: 6px solid #0d6efd;
+            border-right: 6px solid #38bdf8;
+            border-radius: 50%;
+            animation: spinBlue 0.85s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+            box-shadow: 0 0 25px rgba(13, 110, 253, 0.55);
+        }
+        @keyframes spinBlue {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* TABLA HTML DEL HORARIO ORIGINAL DEL DOCENTE */
+        .horario-oficial-wrapper {
+            background: #ffffff;
+            padding: 36px;
+            border-radius: 16px;
+            border: 1px solid #cbd5e1;
+            color: #111827;
+        }
+        .header-cristo-rey-line {
+            border-bottom: 3.5px solid #205493;
+            padding-bottom: 14px;
+            margin-bottom: 26px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .logo-salesiano-circle {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fde68a 0%, #f59e0b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #dc2626;
+            font-size: 1.8rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        .tabla-horario-docente {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .tabla-horario-docente th,
+        .tabla-horario-docente td {
+            border: 1px solid #4b5563;
+            padding: 13px 10px;
+            vertical-align: middle;
+        }
+        .tabla-horario-docente thead th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .fila-recreo-almuerzo td {
+            background-color: #f3f4f6;
+            font-style: italic;
+            color: #374151;
+            padding: 10px;
+        }
+        .celda-libre {
+            color: #64748b;
+            font-weight: 400;
+        }
+        .celda-ocupada-curso {
+            background-color: #f8fafc;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .celda-ocupada-curso span {
+            display: block;
+            font-weight: 400;
+            font-size: 0.8rem;
+            color: #374151;
+            margin-top: 3px;
+        }
+
+        /* ============================================================
+           ROBOT 3D FLOTANTE EN LA ESQUINA INFERIOR ("HABLAR CON IA")
+           ============================================================ */
+        .reybot-floating-Launcher {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1090;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .reybot-speech-tag {
+            background: linear-gradient(135deg, #00f2fe 0%, #0d6efd 100%);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.76rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 50px;
+            box-shadow: 0 6px 18px rgba(13, 110, 253, 0.5);
+            margin-bottom: 6px;
+            border: 1.5px solid #ffffff;
+            white-space: nowrap;
+            animation: tagBounce 3s ease-in-out infinite;
+        }
+
+        .mini-robot-3d {
+            width: 68px;
+            height: 82px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: miniRobotFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.55));
+            transition: transform 0.25s ease;
+        }
+        .reybot-floating-Launcher:hover .mini-robot-3d {
+            transform: scale(1.1);
+        }
+
+        @keyframes miniRobotFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes tagBounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+        }
+
+        .mini-antenna {
+            width: 4px;
+            height: 9px;
+            background: #cbd5e1;
+            position: relative;
+        }
+        .mini-antenna::before {
+            content: "";
+            position: absolute;
+            top: -6px;
+            left: -3px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #38bdf8;
+            box-shadow: 0 0 10px #00f2fe;
+        }
+
+        .mini-head-3d {
+            width: 54px;
+            height: 40px;
+            border-radius: 22px;
+            background: radial-gradient(circle at 30% 25%, #ffffff 0%, #cbd5e1 65%, #475569 100%);
+            box-shadow: inset -4px -4px 8px rgba(15,23,42,0.45), inset 3px 3px 6px #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mini-visor {
+            width: 42px;
+            height: 24px;
+            border-radius: 14px;
+            background: #090d16;
+            box-shadow: inset 0 0 6px rgba(56, 189, 248, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+        }
+
+        .mini-eye {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #38bdf8;
+            box-shadow: 0 0 8px #00f2fe;
+            animation: blinkEyes 4s infinite;
+        }
+
+        @keyframes blinkEyes {
+            0%, 46%, 50%, 96%, 100% { transform: scaleY(1); }
+            48%, 98% { transform: scaleY(0.1); }
+        }
+
+        .mini-torso-3d {
+            width: 42px;
+            height: 32px;
+            margin-top: 3px;
+            border-radius: 14px 14px 22px 22px;
+            background: radial-gradient(circle at 30% 25%, #ffffff 0%, #cbd5e1 65%, #334155 100%);
+            box-shadow: inset -4px -5px 8px rgba(15,23,42,0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mini-core {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #38bdf8;
+            box-shadow: 0 0 10px #00f2fe;
+        }
+
+        .mini-hover-ring {
+            width: 46px;
+            height: 8px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse, rgba(56, 189, 248, 0.75), transparent 75%);
+            margin-top: 4px;
+        }
+
+        .reybot-quick-popup {
+            position: fixed;
+            bottom: 130px;
+            right: 24px;
+            width: 360px;
+            max-width: calc(100vw - 36px);
+            background: #ffffff;
+            color: #1e293b;
+            border-radius: 20px;
+            box-shadow: 0 24px 55px rgba(0, 0, 0, 0.65);
+            z-index: 1095;
+            overflow: hidden;
+            border: 2px solid #38bdf8;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .star-rating i {
+            font-size: 1.45rem;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .star-rating i.active,
+        .star-rating i:hover {
+            color: #facc15;
+            transform: scale(1.15);
+        }
+
+        @media (max-width: 768px) {
+            .section-card {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA DE CARGA CIRCULAR AZUL -->
+    <div id="blueLoadingOverlay">
+        <div class="modern-blue-spinner mb-3"></div>
+        <h6 class="text-white fw-bold mb-1" id="loadingText">Cargando Módulo Docente...</h6>
+        <small class="text-info">Politécnico Salesiano Cristo Rey</small>
+    </div>
+
+    <!-- Barra Superior Fija con Campana, "Hablar con IA" y "Docente Activo" -->
+    <nav class="navbar navbar-dark navbar-custom sticky-top shadow-sm mb-4">
+        <div class="dashboard-container w-100 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <span class="navbar-brand fw-bold fs-6 m-0 d-flex align-items-center">
+                <i class="bi bi-mortarboard-fill me-2 text-info fs-5"></i>
+                <span>Politécnico Salesiano Cristo Rey <span class="text-white-50 mx-1">|</span> Módulo Docente</span>
+                <span class="badge bg-primary ms-2 font-ui" id="badgeAnioEscolarNav">2026-2027</span>
+            </span>
+
+            <div class="d-flex align-items-center text-white small gap-2 gap-md-3 font-ui">
+                <!-- OPCIÓN "HABLAR CON IA" EN EL MENÚ SUPERIOR -->
+                <a href="asistente.html" onclick="navegarConCarga(event, 'asistente.html', 'Iniciando Asistente Virtual IA 3D...')" class="btn-ia-navbar" title="Abrir Asistente de Inteligencia Artificial">
+                    <i class="bi bi-stars"></i> Hablar con IA
+                </a>
+
+                <!-- NOTIFICACIONES DEL MÓDULO #2 -->
+                <div class="dropdown">
+                    <button class="btn btn-dark btn-sm position-relative border-secondary rounded-circle p-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notificaciones del Docente">
+                        <i class="bi bi-bell-fill text-warning fs-6"></i>
+                        <span id="notifBadgeCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            2
+                        </span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg p-2" style="width: 345px; font-size: 0.82rem;">
+                        <li class="dropdown-header fw-bold text-dark border-bottom pb-2 d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-bell-fill text-primary me-1"></i> Notificaciones Recientes</span>
+                            <button class="btn btn-link btn-sm p-0 text-decoration-none" style="font-size: 0.74rem;" onclick="marcarNotificacionesLeidas()">Marcar leídas</button>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 border-bottom text-wrap" href="#seccionHorarioDocente" onclick="mostrarCargaYDesplazar('seccionHorarioDocente', 'Abriendo horario publicado...')">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-calendar2-week-fill text-primary fs-5 me-2 mt-1"></i>
+                                    <div>
+                                        <div class="fw-bold text-dark">Publicación de Horario Docente</div>
+                                        <div class="text-muted">La administración ha publicado y actualizado tu horario individual 2026-2027.</div>
+                                        <small class="text-primary fw-bold">Hace 10 minutos</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 text-wrap" href="conducta.html" onclick="navegarConCarga(event, 'conducta.html', 'Cargando fichas de conducta revisadas...')">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-clipboard2-check-fill text-success fs-5 me-2 mt-1"></i>
+                                    <div>
+                                        <div class="fw-bold text-dark">Ficha de Conducta Revisada</div>
+                                        <div class="text-muted">Dirección ha revisado y procesado la ficha de conducta enviada del curso 6to de Secundaria.</div>
+                                        <small class="text-success fw-bold">Hoy</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Enlace al CV del Docente -->
+                <a href="cv.html" onclick="navegarConCarga(event, 'cv.html', 'Abriendo Currículum del Docente...')" class="profile-link" title="Ver y editar mi Currículum / Perfil Docente">
+                    <span class="status-dot me-2"></span> Docente Activo
+                </a>
+
+                <a href="login.html" onclick="navegarConCarga(event, 'login.html', 'Cerrando sesión de forma segura...')" class="btn btn-outline-light btn-sm px-3 rounded-pill">Salir</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL AMPLIO Y ORDENADO -->
+    <div class="dashboard-container">
+        
+        <!-- CABECERA BIENVENIDA + BARRA INTELIGENTE DE FECHA Y CIERRE ANUAL -->
+        <div class="section-card mb-4">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-7">
+                    <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-2 mb-2 font-ui">
+                        <i class="bi bi-cpu-fill me-1"></i> Área Técnica de Informática · 6to de Secundaria
+                    </span>
+                    <h2 class="fw-bold text-dark mb-2">Panel de Control Docente</h2>
+                    <p class="text-muted mb-0 small" style="line-height: 1.6;">
+                        Gestiona las calificaciones de tus asignaturas, consulta tu horario oficial, guarda la asistencia de cada clase (<strong>P, A, T, E</strong>) y supervisa la consolidación automática diaria en una vista limpia y organizada.
+                    </p>
+                </div>
+                <div class="col-lg-5">
+                    <div class="p-3 rounded-4 bg-light border font-ui">
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                            <span class="text-muted small"><i class="bi bi-calendar-event text-primary me-1"></i> Fecha del País:</span>
+                            <strong class="text-dark small" id="textoFechaPaisHoy">--/--/----</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted small"><i class="bi bi-mortarboard text-success me-1"></i> Año Escolar Activo:</span>
+                            <strong class="text-primary small etiquetaAnioEscolar">2026-2027</strong>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-outline-danger btn-sm fw-semibold" onclick="simularCierreFinDeAnio29Junio()" title="Prueba del requisito #8 del documento">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Simular Cierre 29 de Junio (Fin de Año)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TARJETAS DE RESUMEN EJECUTIVO EN TIEMPO REAL (KPIs) -->
+        <div class="row g-4 mb-4 font-ui">
+            <div class="col-sm-6 col-lg-3">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Matrícula Activa</div>
+                        <h4 class="fw-bold text-dark m-0">4 Alumnos</h4>
+                        <small class="text-primary fw-semibold">6to Informática</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Promedio del Curso</div>
+                        <h4 class="fw-bold text-dark m-0" id="kpiPromedioCurso">91.0</h4>
+                        <small class="text-success fw-semibold">Calculado en vivo</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Cuadro Meritorio</div>
+                        <h4 class="fw-bold text-dark m-0" id="kpiTotalMeritorios">2 / 4</h4>
+                        <small class="text-warning-emphasis fw-semibold">Promedio ≥ 90 pts</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-info bg-opacity-10 text-info">
+                        <i class="bi bi-check2-all"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-semibold">Asistencia de Hoy</div>
+                        <h4 class="fw-bold text-dark m-0" id="kpiAsistenciaHoy">100%</h4>
+                        <small class="text-muted" id="kpiSesionesHoy">0 / 4 clases fijadas</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BARRA DE NAVEGACIÓN POR PESTAÑAS CON OPCIÓN "6. HABLAR CON IA" -->
+        <div class="text-center">
+            <div class="nav-filter-bar shadow">
+                <button type="button" class="nav-filter-btn active" onclick="filtrarSeccionPanel('todas', this)">
+                    <i class="bi bi-grid-1x2-fill me-1"></i> Vista Completa Ordenada
+                </button>
+                <button type="button" class="nav-filter-btn" onclick="filtrarSeccionPanel('calificaciones', this)">
+                    <i class="bi bi-journal-bookmark-fill me-1"></i> 1. Calificaciones
+                </button>
+                <button type="button" class="nav-filter-btn" onclick="filtrarSeccionPanel('asistencia', this)">
+                    <i class="bi bi-calendar2-check-fill me-1"></i> 2. Pasar Asistencia
+                </button>
+                <button type="button" class="nav-filter-btn" onclick="filtrarSeccionPanel('consolidado', this)">
+                    <i class="bi bi-bar-chart-line-fill me-1"></i> 3. Consolidado Diario
+                </button>
+                <button type="button" class="nav-filter-btn" onclick="filtrarSeccionPanel('horario', this)">
+                    <i class="bi bi-clock-fill me-1"></i> 4. Mi Horario
+                </button>
+                <button type="button" class="nav-filter-btn" onclick="filtrarSeccionPanel('pautas', this)">
+                    <i class="bi bi-shield-check me-1"></i> 5. Pautas
+                </button>
+                <!-- OPCIÓN "HABLAR CON IA" EN LA BARRA DE PESTAÑAS -->
+                <a href="asistente.html" onclick="navegarConCarga(event, 'asistente.html', 'Abriendo Asistente Virtual IA 3D...')" class="nav-filter-btn ia-pill">
+                    <i class="bi bi-robot me-1"></i> 6. Hablar con IA
+                </a>
+            </div>
+        </div>
+
+        <!-- =========================================================================
+             BLOQUE 1: SECCIÓN DE CALIFICACIONES
+             ========================================================================= -->
+        <div id="bloquePanelCalificaciones" class="section-card panel-filtrable" data-categoria="calificaciones">
+            <div class="section-header-bar">
+                <div class="d-flex align-items-center">
+                    <div class="section-icon-box bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-journal-code"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark m-0">Registro de Calificaciones por Períodos</h5>
+                        <small class="text-muted font-ui">Curso: 6to de Secundaria (Informática) · Año Escolar <span class="etiquetaAnioEscolar">2026-2027</span></small>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap align-items-center gap-2 font-ui">
+                    <div class="input-group input-group-sm" style="width: 230px;">
+                        <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="buscadorEstudiantesNotas" class="form-control bg-light border-start-0" placeholder="Buscar estudiante..." oninput="filtrarTablaNotas()">
+                    </div>
+                    <a href="Boletin.html" onclick="navegarConCarga(event, 'Boletin.html', 'Abriendo Boletines Individuales...')" class="btn btn-outline-primary btn-sm fw-semibold px-3">
+                        <i class="bi bi-file-earmark-richtext me-1"></i> Ver Boletines
+                    </a>
+                    <button type="button" class="btn btn-success btn-sm fw-bold px-3 shadow-sm" data-bs-toggle="modal" data-bs-target="#enviarRevisionModal">
+                        <i class="bi bi-send-check me-1"></i> Enviar a Revisión
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-responsive font-ui">
+                <table class="table table-bordered table-spacious align-middle small mb-0" id="tablaCalificacionesCurso">
+                    <thead class="text-center">
+                        <tr>
+                            <th style="width: 6%;">No.</th>
+                            <th class="text-start" style="width: 34%;">Nombre del Estudiante</th>
+                            <th style="width: 10%;">P1</th>
+                            <th style="width: 10%;">P2</th>
+                            <th style="width: 10%;">P3</th>
+                            <th style="width: 10%;">P4</th>
+                            <th style="width: 12%;">Promedio / Estado</th>
+                            <th style="width: 8%;">Boletín</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="fila-estudiante-nota">
+                            <td class="text-center fw-bold text-muted">1</td>
+                            <td class="fw-bold text-dark nombre-est">Alcántara Trinidad, Greidy Mercedes</td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="95" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="92" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="94" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="96" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td class="text-center celda-promedio-vivo"></td>
+                            <td class="text-center">
+                                <a href="Boletin.html" onclick="navegarConCarga(event, 'Boletin.html', 'Abriendo Boletines Individuales...')" class="btn btn-sm btn-light border shadow-sm" title="Editar boletín individual">
+                                    <i class="bi bi-pencil-square text-primary"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr class="fila-estudiante-nota">
+                            <td class="text-center fw-bold text-muted">2</td>
+                            <td class="fw-bold text-dark nombre-est">Hernández, Mateo</td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="88" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="90" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="85" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="91" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td class="text-center celda-promedio-vivo"></td>
+                            <td class="text-center">
+                                <a href="Boletin.html" onclick="navegarConCarga(event, 'Boletin.html', 'Abriendo Boletines Individuales...')" class="btn btn-sm btn-light border shadow-sm" title="Editar boletín individual">
+                                    <i class="bi bi-pencil-square text-primary"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr class="fila-estudiante-nota">
+                            <td class="text-center fw-bold text-muted">3</td>
+                            <td class="fw-bold text-dark nombre-est">Soto, Lucy</td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="96" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="95" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="98" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="97" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td class="text-center celda-promedio-vivo"></td>
+                            <td class="text-center">
+                                <a href="Boletin.html" onclick="navegarConCarga(event, 'Boletin.html', 'Abriendo Boletines Individuales...')" class="btn btn-sm btn-light border shadow-sm" title="Editar boletín individual">
+                                    <i class="bi bi-pencil-square text-primary"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr class="fila-estudiante-nota">
+                            <td class="text-center fw-bold text-muted">4</td>
+                            <td class="fw-bold text-dark nombre-est">Pérez, Brian</td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="82" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="85" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="80" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td><input type="number" class="form-control form-control-sm text-center fw-semibold input-nota-boleta" value="88" min="0" max="100" oninput="recalcularPromediosCurso()"></td>
+                            <td class="text-center celda-promedio-vivo"></td>
+                            <td class="text-center">
+                                <a href="Boletin.html" onclick="navegarConCarga(event, 'Boletin.html', 'Abriendo Boletines Individuales...')" class="btn btn-sm btn-light border shadow-sm" title="Editar boletín individual">
+                                    <i class="bi bi-pencil-square text-primary"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- =========================================================================
+             BLOQUE 2: REGISTRO DIARIO DE ASISTENCIA POR CLASE
+             ========================================================================= -->
+        <div id="bloquePanelAsistencia" class="section-card panel-filtrable" data-categoria="asistencia">
+            <div class="section-header-bar">
+                <div class="d-flex align-items-center">
+                    <div class="section-icon-box bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-calendar2-check"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark m-0">Registro Diario de Asistencia y Guardado por Clase</h5>
+                        <small class="text-muted font-ui">Selecciona el bloque horario y registra Presente (P), Ausente (A), Tardanza (T) o Excusa (E).</small>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap align-items-center gap-2 font-ui">
+                    <span class="badge bg-info bg-opacity-10 text-dark border border-info px-3 py-2" id="avisoReinicioDiario">
+                        <i class="bi bi-sunrise-fill text-primary me-1"></i> Sincronizado con el día actual
+                    </span>
+                    <span id="estadoSesionActual" class="badge bg-warning text-dark px-3 py-2">
+                        <i class="bi bi-clock-history me-1"></i> Sesión pendiente de guardar
+                    </span>
+                </div>
+            </div>
+            
+            <div class="row g-4 mb-4 align-items-end bg-light p-4 rounded-4 border mx-0 font-ui">
+                <div class="col-md-3">
+                    <label class="form-label small fw-bold text-secondary mb-2">
+                        <i class="bi bi-calendar3 me-1 text-primary"></i>Fecha (Calendario País):
+                    </label>
+                    <input type="date" id="fechaClase" class="form-control bg-white" onchange="cambiarSesionConSpinner()">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-secondary mb-2">
+                        <i class="bi bi-clock-history me-1 text-primary"></i>Bloque / Hora de Clase:
+                    </label>
+                    <select id="bloqueClase" class="form-select bg-white fw-bold text-primary" onchange="cambiarSesionConSpinner()">
+                        <option value="1ra Clase (07:30 AM - 09:00 AM)">1ra Clase (07:30 AM - 09:00 AM)</option>
+                        <option value="2da Clase (09:00 AM - 10:30 AM)">2da Clase (09:00 AM - 10:30 AM)</option>
+                        <option value="3ra Clase (11:00 AM - 12:45 PM)">3ra Clase (11:00 AM - 12:45 PM)</option>
+                        <option value="4ta Clase (01:45 PM - 03:30 PM)">4ta Clase (01:45 PM - 03:30 PM)</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label small fw-bold text-secondary mb-2">
+                        <i class="bi bi-book-half me-1 text-primary"></i>Asignatura Impartida:
+                    </label>
+                    <select id="asignaturaClase" class="form-select bg-white">
+                        <option value="Desarrollo y Adm. de Aplicaciones">Desarrollo y Adm. de Aplicaciones</option>
+                        <option value="Diseño y Desarrollo de Base de Datos">Diseño y Desarrollo de Base de Datos</option>
+                        <option value="Análisis y Diseño de Sistemas">Análisis y Diseño de Sistemas</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3 px-1 font-ui">
+                <div class="d-flex flex-wrap gap-3 small">
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2"><strong>P</strong> = Presente</span>
+                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-3 py-2"><strong>A</strong> = Ausente</span>
+                    <span class="badge bg-warning bg-opacity-10 text-dark border border-warning px-3 py-2"><strong>T</strong> = Tardanza</span>
+                    <span class="badge bg-info bg-opacity-10 text-dark border border-info px-3 py-2"><strong>E</strong> = Excusa</span>
+                </div>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="marcarTodosPresentes()">
+                    <i class="bi bi-check-all me-1"></i> Marcar Todos Presentes (P)
+                </button>
+            </div>
+
+            <div class="table-responsive font-ui mb-4">
+                <table class="table table-bordered table-spacious align-middle small mb-0">
+                    <thead class="text-center">
+                        <tr>
+                            <th style="width: 6%;">No.</th>
+                            <th class="text-start" style="width: 44%;">Nombre del Estudiante</th>
+                            <th style="width: 35%;">Estado de Asistencia (P / A / T / E)</th>
+                            <th style="width: 15%;">Ficha de Conducta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-student-id="0">
+                            <td class="text-center fw-bold text-muted">1</td>
+                            <td class="fw-bold text-dark">Alcántara Trinidad, Greidy Mercedes</td>
+                            <td class="text-center">
+                                <div class="pate-group" role="group">
+                                    <input type="radio" class="btn-check" name="asist_0" id="pres_0" value="P" checked onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-success" for="pres_0" title="Presente">P</label>
+
+                                    <input type="radio" class="btn-check" name="asist_0" id="aus_0" value="A" onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-danger" for="aus_0" title="Ausente">A</label>
+
+                                    <input type="radio" class="btn-check" name="asist_0" id="tard_0" value="T" onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-warning" for="tard_0" title="Tardanza">T</label>
+
+                                    <input type="radio" class="btn-check" name="asist_0" id="exc_0" value="E" onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-info" for="exc_0" title="Excusa">E</label>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <a href="conducta.html" onclick="navegarConCarga(event, 'conducta.html', 'Abriendo Ficha de Conducta...')" class="btn btn-sm btn-outline-danger px-3" title="Crear Ficha de Conducta / Reporte">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Reportar
+                                </a>
+                            </td>
+                        </tr>
+                        <tr data-student-id="1">
+                            <td class="text-center fw-bold text-muted">2</td>
+                            <td class="fw-bold text-dark">Hernández, Mateo</td>
+                            <td class="text-center">
+                                <div class="pate-group" role="group">
+                                    <input type="radio" class="btn-check" name="asist_1" id="pres_1" value="P" checked onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-success" for="pres_1" title="Presente">P</label>
+
+                                    <input type="radio" class="btn-check" name="asist_1" id="aus_1" value="A" onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-danger" for="aus_1" title="Ausente">A</label>
+
+                                    <input type="radio" class="btn-check" name="asist_1" id="tard_1" value="T" onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-warning" for="tard_1" title="Tardanza">T</label>
+
+                                    <input type="radio" class="btn-check" name="asist_1" id="exc_1" value="E" onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-info" for="exc_1" title="Excusa">E</label>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <a href="conducta.html" onclick="navegarConCarga(event, 'conducta.html', 'Abriendo Ficha de Conducta...')" class="btn btn-sm btn-outline-danger px-3" title="Crear Ficha de Conducta / Reporte">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Reportar
+                                </a>
+                            </td>
+                        </tr>
+                        <tr data-student-id="2">
+                            <td class="text-center fw-bold text-muted">3</td>
+                            <td class="fw-bold text-dark">Soto, Lucy</td>
+                            <td class="text-center">
+                                <div class="pate-group" role="group">
+                                    <input type="radio" class="btn-check" name="asist_2" id="pres_2" value="P" checked onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-success" for="pres_2" title="Presente">P</label>
+
+                                    <input type="radio" class="btn-check" name="asist_2" id="aus_2" value="A" onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-danger" for="aus_2" title="Ausente">A</label>
+
+                                    <input type="radio" class="btn-check" name="asist_2" id="tard_2" value="T" onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-warning" for="tard_2" title="Tardanza">T</label>
+
+                                    <input type="radio" class="btn-check" name="asist_2" id="exc_2" value="E" onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-info" for="exc_2" title="Excusa">E</label>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <a href="conducta.html" onclick="navegarConCarga(event, 'conducta.html', 'Abriendo Ficha de Conducta...')" class="btn btn-sm btn-outline-danger px-3" title="Crear Ficha de Conducta / Reporte">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Reportar
+                                </a>
+                            </td>
+                        </tr>
+                        <tr data-student-id="3">
+                            <td class="text-center fw-bold text-muted">4</td>
+                            <td class="fw-bold text-dark">Pérez, Brian</td>
+                            <td class="text-center">
+                                <div class="pate-group" role="group">
+                                    <input type="radio" class="btn-check" name="asist_3" id="pres_3" value="P" checked onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-success" for="pres_3" title="Presente">P</label>
+
+                                    <input type="radio" class="btn-check" name="asist_3" id="aus_3" value="A" onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-danger" for="aus_3" title="Ausente">A</label>
+
+                                    <input type="radio" class="btn-check" name="asist_3" id="tard_3" value="T" onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-warning" for="tard_3" title="Tardanza">T</label>
+
+                                    <input type="radio" class="btn-check" name="asist_3" id="exc_3" value="E" onchange="previsualizarEnTiempoReal()">
+                                    <label class="btn btn-outline-info" for="exc_3" title="Excusa">E</label>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <a href="conducta.html" onclick="navegarConCarga(event, 'conducta.html', 'Abriendo Ficha de Conducta...')" class="btn btn-sm btn-outline-danger px-3" title="Crear Ficha de Conducta / Reporte">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Reportar
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center pt-2 gap-2 font-ui">
+                <div id="mensajeGuardadoClase" class="small text-success fw-bold d-none">
+                    <i class="bi bi-check-circle-fill me-1"></i> ¡Clase guardada, enviada en tiempo real a Administración y consolidada!
+                </div>
+                <div class="ms-auto">
+                    <button type="button" class="btn btn-institutional fw-bold px-4 py-2 shadow-sm rounded-3" onclick="guardarClaseConSpinner()">
+                        <i class="bi bi-floppy-fill me-2"></i> Guardar Asistencia de la Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================================
+             BLOQUE 3: CONSOLIDACIÓN AUTOMÁTICA DIARIA
+             ========================================================================= -->
+        <div id="bloquePanelConsolidado" class="section-card panel-filtrable" data-categoria="consolidado">
+            <div class="section-header-bar">
+                <div class="d-flex align-items-center">
+                    <div class="section-icon-box bg-info bg-opacity-10 text-primary">
+                        <i class="bi bi-bar-chart-steps"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark m-0">
+                            Consolidación Automática Diaria (<span id="fechaConsolidadaLabel" class="text-primary">--/--/----</span>)
+                        </h5>
+                        <small class="text-muted font-ui">Al pasar al día siguiente, la vista docente se reinicia mientras Administración conserva el histórico completo.</small>
+                    </div>
+                </div>
+                <span class="badge bg-success pulse-badge px-3 py-2 font-ui">
+                    <i class="bi bi-shield-check me-1"></i> Sincronización en Tiempo Real (3:30 PM Consolidado)
+                </span>
+            </div>
+
+            <div class="row g-3 mb-4 text-center font-ui">
+                <div class="col-6 col-md-2">
+                    <div class="consolidation-box h-100">
+                        <div class="text-muted small fw-bold mb-1">Clases Hoy</div>
+                        <h4 class="fw-bold text-primary m-0" id="metricClasesGuardadas">0 / 4</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="consolidation-box h-100">
+                        <div class="text-muted small fw-bold mb-1">Presentes (P)</div>
+                        <h4 class="fw-bold text-success m-0" id="metricTotalPresentes">0</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="consolidation-box h-100">
+                        <div class="text-muted small fw-bold mb-1">Ausentes (A)</div>
+                        <h4 class="fw-bold text-danger m-0" id="metricTotalAusentes">0</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="consolidation-box h-100">
+                        <div class="text-muted small fw-bold mb-1">Tardanzas (T)</div>
+                        <h4 class="fw-bold text-warning m-0" id="metricTotalTardanzas">0</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="consolidation-box h-100">
+                        <div class="text-muted small fw-bold mb-1">Excusas (E)</div>
+                        <h4 class="fw-bold text-info m-0" id="metricTotalExcusas">0</h4>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="consolidation-box h-100">
+                        <div class="text-muted small fw-bold mb-1">% Asistencia</div>
+                        <h4 class="fw-bold text-dark m-0" id="metricPorcentajeDia">100%</h4>
+                        <small class="text-secondary d-block mt-1" style="font-size: 0.7rem;" id="horaUltimaConsolidacion">En vivo</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 font-ui">
+                <div class="col-lg-6">
+                    <div class="bg-light p-4 rounded-4 border h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="fw-bold text-dark small">
+                                <i class="bi bi-journal-check me-2 text-primary"></i>Bitácora de Clases Guardadas en esta Fecha
+                            </span>
+                            <button type="button" class="btn btn-outline-secondary btn-sm py-1 px-2" style="font-size: 0.75rem;" onclick="limpiarConsolidacionDia()">
+                                <i class="bi bi-trash3 me-1"></i>Reiniciar Vista del Día
+                            </button>
+                        </div>
+                        <div class="table-responsive bg-white rounded-3 border">
+                            <table class="table table-bordered align-middle small mb-0 text-center">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="py-2">Bloque</th>
+                                        <th class="py-2">Asignatura</th>
+                                        <th class="py-2">P</th>
+                                        <th class="py-2">A</th>
+                                        <th class="py-2">T</th>
+                                        <th class="py-2">E</th>
+                                        <th class="py-2">Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaClasesGuardadas">
+                                    <tr>
+                                        <td colspan="7" class="text-muted py-4">Aún no se han guardado sesiones en esta fecha.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="bg-light p-4 rounded-4 border h-100">
+                        <div class="mb-3">
+                            <span class="fw-bold text-dark small">
+                                <i class="bi bi-people-fill me-2 text-success"></i>Resumen Consolidado Diario por Estudiante
+                            </span>
+                        </div>
+                        <div class="table-responsive bg-white rounded-3 border">
+                            <table class="table table-bordered align-middle small mb-0 text-center">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-start py-2 ps-3">Estudiante</th>
+                                        <th class="py-2">P</th>
+                                        <th class="py-2">A</th>
+                                        <th class="py-2">T</th>
+                                        <th class="py-2">E</th>
+                                        <th class="py-2">Estatus del Día</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaConsolidadoEstudiantes"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================================================
+             BLOQUE 4: SECCIÓN DE HORARIO INDIVIDUAL DEL DOCENTE
+             ========================================================================= -->
+        <div id="seccionHorarioDocente" class="section-card panel-filtrable" data-categoria="horario">
+            <div class="section-header-bar">
+                <div class="d-flex align-items-center">
+                    <div class="section-icon-box bg-warning bg-opacity-10 text-warning-emphasis">
+                        <i class="bi bi-calendar3-week-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark m-0">Mi Horario Individual de Clases (Módulo Docente)</h5>
+                        <small class="text-muted font-ui">Estructura oficial asignada por la administración del centro educativo.</small>
+                    </div>
+                </div>
+                <span class="badge bg-primary px-3 py-2 font-ui">Publicado por Administración</span>
+            </div>
+
+            <div class="horario-oficial-wrapper table-responsive" id="contenedorTablaHorarioDocente">
+                <div class="header-cristo-rey-line">
+                    <div class="logo-salesiano-circle">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <h5 class="fw-bold m-0 text-dark" style="letter-spacing: 0.5px;">POLITÉCNICO SALESIANO “CRISTO REY”</h5>
+                </div>
+
+                <div class="text-center mb-4">
+                    <h4 class="fw-bold text-dark mb-1" id="nombreDocenteHorario">Ana Carolina Medina</h4>
+                    <p class="mb-0 small"><strong>Año escolar:</strong> <span class="etiquetaAnioEscolar">2026-2027</span></p>
+                </div>
+
+                <table class="tabla-horario-docente" id="tablaHorarioDocenteOficial">
+                    <thead>
+                        <tr>
+                            <th style="width: 8%;">Bloque</th>
+                            <th style="width: 10%;">Hora</th>
+                            <th style="width: 16.4%;">Lunes</th>
+                            <th style="width: 16.4%;">Martes</th>
+                            <th style="width: 16.4%;">Miércoles</th>
+                            <th style="width: 16.4%;">Jueves</th>
+                            <th style="width: 16.4%;">Viernes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold">1</td>
+                            <td class="small">7:30<br>8:15</td>
+                            <td rowspan="2" class="celda-ocupada-curso">
+                                6TO ELECTR
+                                <span>Ciencias Naturales</span>
+                            </td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">2</td>
+                            <td class="small">8:15<br>9:00</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">3</td>
+                            <td class="small">9:00<br>9:45</td>
+                            <td class="celda-libre">Libre</td>
+                            <td rowspan="2" class="celda-ocupada-curso">
+                                6TO TURISMO
+                                <span>Ciencias Naturales</span>
+                            </td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">4</td>
+                            <td class="small">9:45<br>10:30</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-ocupada-curso">
+                                6TO ELECTR
+                                <span>Ciencias Naturales</span>
+                            </td>
+                            <td class="celda-libre">Libre</td>
+                        </tr>
+                        <tr class="fila-recreo-almuerzo">
+                            <td class="fw-bold fst-normal">Recreo</td>
+                            <td class="small fst-normal">10:30<br>11:00</td>
+                            <td colspan="5">Recreo · 10:30 a 11:00</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">5</td>
+                            <td class="small">11:00<br>11:45</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-ocupada-curso">
+                                6TO TURISMO
+                                <span>Ciencias Naturales</span>
+                            </td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-ocupada-curso">
+                                6TO ELECTR
+                                <span>Ciencias Naturales</span>
+                            </td>
+                            <td class="celda-libre">Libre</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">6</td>
+                            <td class="small">11:45<br>12:45</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                        </tr>
+                        <tr class="fila-recreo-almuerzo">
+                            <td class="fw-bold fst-normal">Almuerzo</td>
+                            <td class="small fst-normal">12:45<br>13:45</td>
+                            <td colspan="5">Almuerzo · 12:45 a 13:45</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">7</td>
+                            <td class="small">13:45<br>14:45</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                            <td rowspan="2" class="celda-ocupada-curso">
+                                6TO ADM
+                                <span>Ciencias Naturales</span>
+                            </td>
+                            <td class="celda-libre">Libre</td>
+                            <td rowspan="2" class="celda-ocupada-curso">
+                                6TO ADM
+                                <span>Ciencias Naturales</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">8</td>
+                            <td class="small">14:45<br>15:30</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                            <td class="celda-libre">Libre</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- =========================================================================
+             BLOQUE 5: ACCESO A BOLETINES, HABLAR CON IA Y PAUTAS INSTITUCIONALES
+             ========================================================================= -->
+        <div id="bloquePanelPautas" class="panel-filtrable" data-categoria="pautas">
+            <div class="row g-3 mb-5">
+                <div class="col-md-8">
+                    <a href="Boletin.html" onclick="navegarConCarga(event, 'Boletin.html', 'Cargando Boletines Individuales...')" class="btn btn-institutional btn-lg fw-bold shadow-lg py-3 rounded-4 w-100">
+                        <i class="bi bi-file-earmark-text-fill me-2 fs-5"></i> Ir a Edición de Boletines Individuales (Vista Carrusel Meritorio)
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <a href="asistente.html" onclick="navegarConCarga(event, 'asistente.html', 'Iniciando Asistente Virtual IA 3D...')" class="btn btn-info btn-lg fw-bold text-dark shadow-lg py-3 rounded-4 w-100">
+                        <i class="bi bi-robot me-2 fs-5"></i> Hablar con IA (Pantalla 3D)
+                    </a>
+                </div>
+            </div>
+
+            <div class="section-card mb-0">
+                <div class="section-header-bar">
+                    <div class="d-flex align-items-center">
+                        <div class="section-icon-box bg-warning bg-opacity-10 text-warning">
+                            <i class="bi bi-lightbulb-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold text-dark m-0">Recomendaciones y Pautas Institucionales</h5>
+                            <small class="text-muted font-ui">Lineamientos operativos, técnicos y de mantenimiento para la correcta ejecución del módulo docente.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 font-ui">
+                    <div class="col-md-4">
+                        <div class="p-4 border rounded-4 bg-light h-100">
+                            <h6 class="fw-bold text-primary mb-2"><i class="bi bi-code-slash me-2"></i>1. Técnicas</h6>
+                            <p class="text-muted small mb-0" style="line-height: 1.6;">Mantener los scripts optimizados, asegurar una correcta estructuración del frontend y programar respaldos periódicos de los registros académicos.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 border rounded-4 bg-light h-100">
+                            <h6 class="fw-bold text-success mb-2"><i class="bi bi-tools me-2"></i>2. Mantenimiento</h6>
+                            <p class="text-muted small mb-0" style="line-height: 1.6;">Revisar periódicamente la integridad de las tablas de asistencia y depurar registros obsoletos para garantizar un óptimo rendimiento del sistema.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 border rounded-4 bg-light h-100">
+                            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-shield-lock-fill me-2"></i>3. Producción</h6>
+                            <p class="text-muted small mb-0" style="line-height: 1.6;">Operar en estaciones designadas del área de informática con credenciales cifradas y niveles de acceso restringidos exclusivamente al personal docente autorizado.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- =========================================================================
+         ROBOT 3D FLOTANTE EN LA ESQUINA INFERIOR DERECHA ("HABLAR CON IA")
+         ========================================================================= -->
+    <div class="reybot-floating-Launcher" onclick="togglePopupReyBot3D()" title="Hablar con IA (Asistente 3D)">
+        <div class="reybot-speech-tag">
+            <i class="bi bi-stars me-1"></i> Hablar con IA
+        </div>
+        <div class="mini-robot-3d">
+            <div class="mini-antenna"></div>
+            <div class="mini-head-3d">
+                <div class="mini-visor">
+                    <div class="mini-eye"></div>
+                    <div class="mini-eye"></div>
+                </div>
+            </div>
+            <div class="mini-torso-3d">
+                <div class="mini-core"></div>
+            </div>
+            <div class="mini-hover-ring"></div>
+        </div>
+    </div>
+
+    <!-- Ventana Emergente de Chat Ilimitado (∞) y botón a asistente.html -->
+    <div id="popupReyBot3D" class="reybot-quick-popup d-none">
+        <div class="bg-dark text-white p-3 d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="m-0 fw-bold small"><i class="bi bi-robot text-info me-1"></i> REY-BOT 3D · IA Docente</h6>
+                <small class="text-info" style="font-size: 0.7rem;">Consultas: <span id="widgetContadorResp">0</span> / ∞ (Ilimitadas)</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="asistente.html" onclick="navegarConCarga(event, 'asistente.html', 'Abriendo Asistente IA 3D en pantalla completa...')" class="btn btn-info btn-sm py-1 px-2 fw-bold text-dark" style="font-size: 0.72rem;" title="Ir a la pestaña completa del Asistente 3D">
+                    <i class="bi bi-arrows-fullscreen me-1"></i> Pantalla 3D
+                </a>
+                <button type="button" class="btn-close btn-close-white btn-sm" onclick="togglePopupReyBot3D()"></button>
+            </div>
+        </div>
+
+        <div id="widgetChatMensajes" class="p-3 bg-light" style="height: 220px; overflow-y: auto; font-size: 0.82rem;">
+            <div class="p-2 rounded-3 mb-2" style="background: #e0f2fe; color: #0f172a;">
+                <strong>🤖 REY-BOT 3D:</strong> ¡Hola, profe! Puedes hacerme <strong>preguntas infinitas (∞)</strong> aquí mismo o pulsar en <strong>Pantalla 3D</strong> arriba para abrir mi sala completa.
+            </div>
+        </div>
+
+        <!-- CAJA DE CALIFICACIÓN DE 5 ESTRELLAS (Aparece automáticamente tras 3 respuestas) -->
+        <div id="widgetCajaEstrellas" class="p-3 bg-warning bg-opacity-10 border-top border-bottom border-warning text-center d-none">
+            <div class="fw-bold text-dark small mb-1">«Ayúdanos a mejorar como equipo»</div>
+            <div class="star-rating mb-2" id="estrellasContenedor">
+                <i class="bi bi-star-fill active" onclick="seleccionarEstrella(1)"></i>
+                <i class="bi bi-star-fill active" onclick="seleccionarEstrella(2)"></i>
+                <i class="bi bi-star-fill active" onclick="seleccionarEstrella(3)"></i>
+                <i class="bi bi-star-fill active" onclick="seleccionarEstrella(4)"></i>
+                <i class="bi bi-star-fill active" onclick="seleccionarEstrella(5)"></i>
+            </div>
+            <div class="input-group input-group-sm">
+                <input type="text" id="comentarioCalificacionBot" class="form-control bg-white" placeholder="Escribe tu comentario...">
+                <button type="button" class="btn btn-dark fw-bold" onclick="enviarCalificacionBot()">Enviar</button>
+            </div>
+        </div>
+
+        <div class="p-2 bg-white border-top d-flex gap-1">
+            <input type="text" id="widgetInputPregunta" class="form-control form-control-sm" placeholder="Pregúntale a la IA sin límite (∞)..." onkeypress="if(event.key==='Enter') responderDesdeWidget()">
+            <button class="btn btn-primary btn-sm px-3" onclick="responderDesdeWidget()">
+                <i class="bi bi-send-fill"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: ENVIAR A REVISIÓN -->
+    <div class="modal fade font-ui" id="enviarRevisionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fs-6">Confirmar envío a revisión</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body small p-4">
+                    <p class="mb-0">¿Estás segura de que deseas enviar las calificaciones de este curso a revisión? Una vez enviado, el sistema validará los datos para el proceso administrativo.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-institutional btn-sm" data-bs-dismiss="modal" onclick="ejecutarSpinnerTemporal('Enviando calificaciones a revisión administrativa...', 700)">Confirmar Envío</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script Integral del Módulo Docente -->
+    <script>
+        const listaEstudiantes = [
+            "Alcántara Trinidad, Greidy Mercedes",
+            "Hernández, Mateo",
+            "Soto, Lucy",
+            "Pérez, Brian"
+        ];
+
+        function filtrarSeccionPanel(categoria, botonPulsado) {
+            document.querySelectorAll('.nav-filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (botonPulsado) botonPulsado.classList.add('active');
+
+            ejecutarSpinnerTemporal('Organizando vista del panel...', 350, () => {
+                document.querySelectorAll('.panel-filtrable').forEach(bloque => {
+                    if (categoria === 'todas' || bloque.dataset.categoria === categoria) {
+                        bloque.classList.remove('d-none');
+                    } else {
+                        bloque.classList.add('d-none');
+                    }
+                });
+            });
+        }
+
+        function recalcularPromediosCurso() {
+            const filas = document.querySelectorAll('#tablaCalificacionesCurso tbody .fila-estudiante-nota');
+            let sumaPromedios = 0;
+            let conteoAlumnos = 0;
+            let conteoMeritorios = 0;
+
+            filas.forEach(fila => {
+                const inputs = fila.querySelectorAll('.input-nota-boleta');
+                let sumaFila = 0;
+                let tieneNotas = false;
+
+                inputs.forEach(inp => {
+                    const val = parseFloat(inp.value);
+                    if (!isNaN(val)) {
+                        sumaFila += val;
+                        tieneNotas = true;
+                    }
+                });
+
+                const celdaPromedio = fila.querySelector('.celda-promedio-vivo');
+                if (!tieneNotas) {
+                    celdaPromedio.innerHTML = `<span class="badge bg-secondary">En blanco</span>`;
+                } else {
+                    const prom = Math.round(sumaFila / inputs.length);
+                    sumaPromedios += prom;
+                    conteoAlumnos++;
+
+                    if (prom >= 90) {
+                        conteoMeritorios++;
+                        celdaPromedio.innerHTML = `
+                            <span class="badge bg-warning text-dark border border-warning px-2 py-1">
+                                <i class="bi bi-star-fill me-1"></i>${prom} · Meritorio
+                            </span>
+                        `;
+                    } else {
+                        celdaPromedio.innerHTML = `
+                            <span class="badge bg-light text-dark border px-2 py-1">
+                                ${prom} · Regular
+                            </span>
+                        `;
+                    }
+                }
+            });
+
+            const promedioGeneral = conteoAlumnos > 0 ? (sumaPromedios / conteoAlumnos).toFixed(1) : '--';
+            document.getElementById('kpiPromedioCurso').innerText = promedioGeneral;
+            document.getElementById('kpiTotalMeritorios').innerText = `${conteoMeritorios} / ${filas.length}`;
+        }
+
+        function filtrarTablaNotas() {
+            const texto = document.getElementById('buscadorEstudiantesNotas').value.toLowerCase();
+            document.querySelectorAll('#tablaCalificacionesCurso tbody .fila-estudiante-nota').forEach(fila => {
+                const nombre = fila.querySelector('.nombre-est').innerText.toLowerCase();
+                fila.style.display = nombre.includes(texto) ? '' : 'none';
+            });
+        }
+
+        function marcarTodosPresentes() {
+            for (let i = 0; i < listaEstudiantes.length; i++) {
+                asignarValorRadioEstudiante(i, 'P');
+            }
+            previsualizarEnTiempoReal();
+        }
+
+        function ejecutarSpinnerTemporal(mensaje, duracion = 600, callback = null) {
+            const overlay = document.getElementById('blueLoadingOverlay');
+            const texto = document.getElementById('loadingText');
+            if (mensaje) texto.innerText = mensaje;
+            overlay.classList.remove('hidden-loader');
+
+            setTimeout(() => {
+                overlay.classList.add('hidden-loader');
+                if (callback) callback();
+            }, duracion);
+        }
+
+        function navegarConCarga(event, urlDestino, mensaje) {
+            event.preventDefault();
+            ejecutarSpinnerTemporal(mensaje, 550, () => {
+                window.location.href = urlDestino;
+            });
+        }
+
+        function mostrarCargaYDesplazar(idElemento, mensaje) {
+            ejecutarSpinnerTemporal(mensaje, 450, () => {
+                document.querySelectorAll('.panel-filtrable').forEach(b => b.classList.remove('d-none'));
+                const el = document.getElementById(idElemento);
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+
+        function marcarNotificacionesLeidas() {
+            const badge = document.getElementById('notifBadgeCount');
+            badge.classList.add('d-none');
+        }
+
+        function obtenerFechaActualPaisISO() {
+            const ahora = new Date();
+            const anio = ahora.getFullYear();
+            const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+            const dia = String(ahora.getDate()).padStart(2, '0');
+            return `${anio}-${mes}-${dia}`;
+        }
+
+        function formatearFecha(fechaISO) {
+            if (!fechaISO) return "";
+            const partes = fechaISO.split("-");
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        function verificarReinicioDiarioYAnual() {
+            const hoyISO = obtenerFechaActualPaisISO();
+            document.getElementById('textoFechaPaisHoy').innerText = formatearFecha(hoyISO);
+            document.getElementById('fechaClase').value = hoyISO;
+
+            const ultimoDiaVisto = localStorage.getItem('cristorey_ultimo_dia_docente');
+            if (ultimoDiaVisto && ultimoDiaVisto !== hoyISO) {
+                const aviso = document.getElementById('avisoReinicioDiario');
+                aviso.className = "badge bg-primary text-white px-3 py-2";
+                aviso.innerHTML = `<i class="bi bi-arrow-repeat me-1"></i> Vista reiniciada para el nuevo día (${formatearFecha(hoyISO)})`;
+            }
+            localStorage.setItem('cristorey_ultimo_dia_docente', hoyISO);
+
+            const hoy = new Date();
+            if (hoy.getMonth() === 5 && hoy.getDate() === 29) {
+                aplicarReinicioFinDeAnioEscolar(hoy.getFullYear());
+            }
+        }
+
+        function simularCierreFinDeAnio29Junio() {
+            ejecutarSpinnerTemporal('Procesando cierre anual del 29 de junio y preparando nuevo año escolar...', 950, () => {
+                const anioActual = new Date().getFullYear();
+                aplicarReinicioFinDeAnioEscolar(anioActual + 1);
+                alert('¡Reinicio automático del 29 de junio ejecutado! Boletas, asistencias y horario han quedado en blanco y el año escolar se actualizó automáticamente.');
+            });
+        }
+
+        function aplicarReinicioFinDeAnioEscolar(nuevoAnioInicio) {
+            const nuevoPeriodo = `${nuevoAnioInicio}-${nuevoAnioInicio + 1}`;
+            document.getElementById('badgeAnioEscolarNav').innerText = nuevoPeriodo;
+            document.querySelectorAll('.etiquetaAnioEscolar').forEach(el => el.innerText = nuevoPeriodo);
+
+            document.querySelectorAll('.input-nota-boleta').forEach(inp => inp.value = '');
+            recalcularPromediosCurso();
+
+            localStorage.removeItem('cristorey_asistencia_clases');
+            cargarEstadoDeSesion();
+
+            document.querySelectorAll('#tablaHorarioDocenteOficial .celda-ocupada-curso, #tablaHorarioDocenteOficial .celda-libre').forEach(td => {
+                td.className = 'celda-libre text-muted';
+                td.innerHTML = 'En blanco (Nuevo Año)';
+            });
+        }
+
+        function obtenerBaseAsistencia() {
+            const data = localStorage.getItem('cristorey_asistencia_clases');
+            return data ? JSON.parse(data) : {};
+        }
+
+        function guardarBaseAsistencia(db) {
+            localStorage.setItem('cristorey_asistencia_clases', JSON.stringify(db));
+        }
+
+        function obtenerValorRadioEstudiante(idx) {
+            const seleccionado = document.querySelector(`input[name="asist_${idx}"]:checked`);
+            return seleccionado ? seleccionado.value : 'P';
+        }
+
+        function asignarValorRadioEstudiante(idx, valor) {
+            const mapaIds = { 'P': `pres_${idx}`, 'A': `aus_${idx}`, 'T': `tard_${idx}`, 'E': `exc_${idx}` };
+            const idRadio = mapaIds[valor] || `pres_${idx}`;
+            const el = document.getElementById(idRadio);
+            if (el) el.checked = true;
+        }
+
+        function cambiarSesionConSpinner() {
+            ejecutarSpinnerTemporal('Cargando datos de la sesión seleccionada...', 400, () => {
+                cargarEstadoDeSesion();
+            });
+        }
+
+        function guardarClaseConSpinner() {
+            ejecutarSpinnerTemporal('Guardando asistencia de la clase y sincronizando en tiempo real...', 550, () => {
+                guardarClaseActual();
+            });
+        }
+
+        function guardarClaseActual() {
+            const fecha = document.getElementById('fechaClase').value;
+            const bloque = document.getElementById('bloqueClase').value;
+            const asignatura = document.getElementById('asignaturaClase').value;
+
+            const estados = [];
+            let p = 0, a = 0, t = 0, e = 0;
+
+            for (let i = 0; i < listaEstudiantes.length; i++) {
+                const val = obtenerValorRadioEstudiante(i);
+                estados.push(val);
+                if (val === 'P') p++;
+                else if (val === 'A') a++;
+                else if (val === 'T') t++;
+                else if (val === 'E') e++;
+            }
+
+            const ahora = new Date();
+            const horaRegistro = ahora.toLocaleTimeString('es-DO', { hour: '2-digit', minute: '2-digit' });
+
+            const db = obtenerBaseAsistencia();
+            if (!db[fecha]) db[fecha] = {};
+
+            db[fecha][bloque] = {
+                bloque: bloque,
+                asignatura: asignatura,
+                estados: estados,
+                presentes: p,
+                ausentes: a,
+                tardanzas: t,
+                excusas: e,
+                hora: horaRegistro
+            };
+
+            guardarBaseAsistencia(db);
+
+            const badge = document.getElementById('estadoSesionActual');
+            badge.className = "badge bg-success px-3 py-2";
+            badge.innerHTML = `<i class="bi bi-check2-circle me-1"></i> Clase guardada (${horaRegistro})`;
+
+            const msg = document.getElementById('mensajeGuardadoClase');
+            msg.classList.remove('d-none');
+            setTimeout(() => msg.classList.add('d-none'), 3500);
+
+            ejecutarConsolidacionAutomatica();
+        }
+
+        function cargarEstadoDeSesion() {
+            const fecha = document.getElementById('fechaClase').value;
+            const bloque = document.getElementById('bloqueClase').value;
+            const db = obtenerBaseAsistencia();
+            const badge = document.getElementById('estadoSesionActual');
+
+            if (db[fecha] && db[fecha][bloque]) {
+                const sesion = db[fecha][bloque];
+                document.getElementById('asignaturaClase').value = sesion.asignatura;
+                sesion.estados.forEach((val, idx) => asignarValorRadioEstudiante(idx, val));
+                badge.className = "badge bg-success px-3 py-2";
+                badge.innerHTML = `<i class="bi bi-check2-circle me-1"></i> Clase guardada (${sesion.hora})`;
+            } else {
+                for (let i = 0; i < listaEstudiantes.length; i++) {
+                    asignarValorRadioEstudiante(i, 'P');
+                }
+                badge.className = "badge bg-warning text-dark px-3 py-2";
+                badge.innerHTML = `<i class="bi bi-clock-history me-1"></i> Sesión pendiente de guardar`;
+            }
+
+            ejecutarConsolidacionAutomatica();
+        }
+
+        function previsualizarEnTiempoReal() {
+            const badge = document.getElementById('estadoSesionActual');
+            badge.className = "badge bg-info text-dark px-3 py-2";
+            badge.innerHTML = `<i class="bi bi-pencil-square me-1"></i> Cambios en curso (Pulsa Guardar)`;
+            ejecutarConsolidacionAutomatica();
+        }
+
+        function ejecutarConsolidacionAutomatica() {
+            const fecha = document.getElementById('fechaClase').value;
+            document.getElementById('fechaConsolidadaLabel').innerText = formatearFecha(fecha);
+
+            const db = obtenerBaseAsistencia();
+            const sesionesDelDia = db[fecha] ? Object.values(db[fecha]) : [];
+
+            let totalP = 0, totalA = 0, totalT = 0, totalE = 0;
+
+            const resumenAlumnos = listaEstudiantes.map(nombre => ({
+                nombre: nombre, p: 0, a: 0, t: 0, e: 0
+            }));
+
+            if (sesionesDelDia.length > 0) {
+                sesionesDelDia.forEach(sesion => {
+                    totalP += sesion.presentes || 0;
+                    totalA += sesion.ausentes || 0;
+                    totalT += sesion.tardanzas || 0;
+                    totalE += sesion.excusas || 0;
+                    sesion.estados.forEach((estado, idx) => {
+                        if (estado === 'P') resumenAlumnos[idx].p++;
+                        else if (estado === 'A') resumenAlumnos[idx].a++;
+                        else if (estado === 'T') resumenAlumnos[idx].t++;
+                        else if (estado === 'E') resumenAlumnos[idx].e++;
+                    });
+                });
+            } else {
+                for (let i = 0; i < listaEstudiantes.length; i++) {
+                    const val = obtenerValorRadioEstudiante(i);
+                    if (val === 'P') { totalP++; resumenAlumnos[i].p++; }
+                    else if (val === 'A') { totalA++; resumenAlumnos[i].a++; }
+                    else if (val === 'T') { totalT++; resumenAlumnos[i].t++; }
+                    else if (val === 'E') { totalE++; resumenAlumnos[i].e++; }
+                }
+            }
+
+            const totalRegistros = totalP + totalA + totalT + totalE;
+            const asistidosEfectivos = totalP + totalT + totalE;
+            const porcentaje = totalRegistros > 0 ? Math.round((asistidosEfectivos / totalRegistros) * 100) : 100;
+
+            document.getElementById('metricClasesGuardadas').innerText = `${sesionesDelDia.length} / 4`;
+            document.getElementById('metricTotalPresentes').innerText = totalP;
+            document.getElementById('metricTotalAusentes').innerText = totalA;
+            document.getElementById('metricTotalTardanzas').innerText = totalT;
+            document.getElementById('metricTotalExcusas').innerText = totalE;
+            document.getElementById('metricPorcentajeDia').innerText = `${porcentaje}%`;
+
+            document.getElementById('kpiAsistenciaHoy').innerText = `${porcentaje}%`;
+            document.getElementById('kpiSesionesHoy').innerText = `${sesionesDelDia.length} / 4 clases fijadas`;
+
+            const ahora = new Date();
+            document.getElementById('horaUltimaConsolidacion').innerText = `Actualizado ${ahora.toLocaleTimeString('es-DO', { hour: '2-digit', minute: '2-digit' })}`;
+
+            const tbodyClases = document.getElementById('tablaClasesGuardadas');
+            if (sesionesDelDia.length === 0) {
+                tbodyClases.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-muted py-4">
+                            Previsualizando sesión actual. Pulsa <strong>"Guardar Asistencia de la Sesión"</strong> para fijar la clase.
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbodyClases.innerHTML = sesionesDelDia.map(s => `
+                    <tr>
+                        <td class="fw-bold text-primary py-2">${s.bloque.split(' (')[0]}</td>
+                        <td class="text-truncate py-2" style="max-width: 130px;" title="${s.asignatura}">${s.asignatura}</td>
+                        <td><span class="badge bg-success">${s.presentes || 0}</span></td>
+                        <td><span class="badge bg-danger">${s.ausentes || 0}</span></td>
+                        <td><span class="badge bg-warning text-dark">${s.tardanzas || 0}</span></td>
+                        <td><span class="badge bg-info text-dark">${s.excusas || 0}</span></td>
+                        <td class="text-muted">${s.hora}</td>
+                    </tr>
+                `).join('');
+            }
+
+            const tbodyEstudiantes = document.getElementById('tablaConsolidadoEstudiantes');
+            tbodyEstudiantes.innerHTML = resumenAlumnos.map(al => {
+                let badgeEstatus = '<span class="badge bg-success">Asistencia Completa</span>';
+                if (al.a > 0 && (al.p > 0 || al.t > 0)) {
+                    badgeEstatus = '<span class="badge bg-warning text-dark">Inasistencia Parcial</span>';
+                } else if (al.a > 0 && al.p === 0 && al.t === 0 && al.e === 0) {
+                    badgeEstatus = '<span class="badge bg-danger">Ausente</span>';
+                } else if (al.t > 0 && al.a === 0) {
+                    badgeEstatus = '<span class="badge bg-warning text-dark">Con Tardanza</span>';
+                } else if (al.e > 0 && al.a === 0) {
+                    badgeEstatus = '<span class="badge bg-info text-dark">Con Excusa</span>';
+                }
+
+                return `
+                    <tr>
+                        <td class="text-start fw-bold py-2 ps-3">${al.nombre}</td>
+                        <td class="text-success fw-bold">${al.p}</td>
+                        <td class="text-danger fw-bold">${al.a}</td>
+                        <td class="text-warning fw-bold">${al.t}</td>
+                        <td class="text-info fw-bold">${al.e}</td>
+                        <td>${badgeEstatus}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function limpiarConsolidacionDia() {
+            ejecutarSpinnerTemporal('Reiniciando registros de la vista diaria...', 450, () => {
+                const fecha = document.getElementById('fechaClase').value;
+                const db = obtenerBaseAsistencia();
+                if (db[fecha]) {
+                    delete db[fecha];
+                    guardarBaseAsistencia(db);
+                }
+                cargarEstadoDeSesion();
+            });
+        }
+
+        /* =====================================================================
+           ROBOT 3D FLOTANTE CON CONSULTAS INFINITAS (∞) Y 5 ESTRELLAS
+           ===================================================================== */
+        let widgetConteoResp = 0;
+        let estrellasSeleccionadas = 5;
+        let encuestaMostrada = false;
+
+        function togglePopupReyBot3D() {
+            document.getElementById('popupReyBot3D').classList.toggle('d-none');
+        }
+
+        function responderDesdeWidget() {
+            const inp = document.getElementById('widgetInputPregunta');
+            const txt = inp.value.trim();
+            if (!txt) return;
+
+            const box = document.getElementById('widgetChatMensajes');
+            box.innerHTML += `<div class="p-2 rounded-3 mb-2 ms-auto text-white" style="background:#205493; max-width:85%;">${txt}</div>`;
+            inp.value = '';
+            inp.focus();
+
+            setTimeout(() => {
+                widgetConteoResp++;
+                document.getElementById('widgetContadorResp').innerText = widgetConteoResp;
+
+                let respuesta = "Recuerda que puedes registrar P, A, T y E en cada bloque o abrir mi Pantalla 3D completa arriba.";
+                if (txt.toLowerCase().includes("horario")) {
+                    respuesta = "Tu horario individual 2026-2027 está en la pestaña '4. Mi Horario' con tus bloques y horas libres.";
+                } else if (txt.toLowerCase().includes("meritorio") || txt.toLowerCase().includes("nota")) {
+                    respuesta = "Los alumnos con promedio ≥ 90 reciben automáticamente la estrella de Meritorio y bordes dorados en Boletin.html.";
+                }
+
+                box.innerHTML += `
+                    <div class="p-2 rounded-3 mb-2" style="background:#e0f2fe; color:#0f172a; max-width:88%;">
+                        <strong>🤖 REY-BOT 3D (#${widgetConteoResp}):</strong> ${respuesta}
+                    </div>
+                `;
+                box.scrollTop = box.scrollHeight;
+
+                if (widgetConteoResp === 3 && !encuestaMostrada) {
+                    encuestaMostrada = true;
+                    document.getElementById('widgetCajaEstrellas').classList.remove('d-none');
+                }
+            }, 320);
+        }
+
+        function seleccionarEstrella(cantidad) {
+            estrellasSeleccionadas = cantidad;
+            const estrellas = document.querySelectorAll('#estrellasContenedor i');
+            estrellas.forEach((star, idx) => {
+                if (idx < cantidad) star.classList.add('active');
+                else star.classList.remove('active');
+            });
+        }
+
+        function enviarCalificacionBot() {
+            const caja = document.getElementById('widgetCajaEstrellas');
+            caja.innerHTML = `
+                <div class="text-center text-success fw-bold small py-1">
+                    <i class="bi bi-check-circle-fill me-1"></i> ¡Gracias por calificarnos con ${estrellasSeleccionadas} estrellas! Sigue preguntando sin límite.
+                </div>
+            `;
+            setTimeout(() => caja.classList.add('d-none'), 2200);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            verificarReinicioDiarioYAnual();
+            recalcularPromediosCurso();
+            cargarEstadoDeSesion();
+            setTimeout(() => {
+                document.getElementById('blueLoadingOverlay').classList.add('hidden-loader');
+            }, 600);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente Virtual 3D - Politécnico Salesiano Cristo Rey</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Merriweather', serif;
+            background: linear-gradient(135deg, #061021, #0b1d3a, #102a4c, #1a365d);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .font-ui {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Pantalla de carga circular azul */
+        #blueLoadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 29, 58, 0.88);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+        #blueLoadingOverlay.hidden-loader {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .modern-blue-spinner {
+            width: 66px;
+            height: 66px;
+            border: 6px solid rgba(147, 197, 253, 0.25);
+            border-top: 6px solid #0d6efd;
+            border-right: 6px solid #38bdf8;
+            border-radius: 50%;
+            animation: spinBlue 0.85s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+            box-shadow: 0 0 25px rgba(13, 110, 253, 0.6);
+        }
+        @keyframes spinBlue {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Barra Superior */
+        .navbar-custom {
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 12px 0;
+        }
+
+        .nav-pill-link {
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 7px 15px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.25s ease;
+            border: 1px solid transparent;
+        }
+        .nav-pill-link:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .nav-pill-link.active {
+            background: #0d6efd;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(13, 110, 253, 0.5);
+        }
+
+        /* ==============================================================
+           ESCENARIO Y MODELADO 3D DEL ROBOT FLOTANTE (CSS VOLUMÉTRICO)
+           ============================================================== */
+        .robot-stage-card {
+            background: radial-gradient(circle at 50% 35%, rgba(30, 64, 175, 0.45), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(147, 197, 253, 0.25);
+            border-radius: 26px;
+            padding: 35px 25px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(56, 189, 248, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 560px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .robot-3d-scene {
+            position: relative;
+            width: 240px;
+            height: 310px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            perspective: 900px;
+            margin: 15px 0;
+        }
+
+        .robot-3d-body-group {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: floatRobot3D 3.6s ease-in-out infinite;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        @keyframes floatRobot3D {
+            0%, 100% { transform: translateY(0px) rotateX(4deg) rotateY(-6deg); }
+            50% { transform: translateY(-22px) rotateX(-4deg) rotateY(6deg); }
+        }
+
+        .robot-antenna {
+            width: 6px;
+            height: 22px;
+            background: linear-gradient(90deg, #94a3b8, #f8fafc, #475569);
+            border-radius: 4px;
+            position: relative;
+            margin-bottom: -3px;
+            z-index: 3;
+        }
+        .robot-antenna::before {
+            content: "";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #38bdf8, #0284c7);
+            box-shadow: 0 0 18px #38bdf8, 0 0 32px #0d6efd;
+            animation: antennaPulse 1.5s infinite alternate;
+        }
+
+        @keyframes antennaPulse {
+            0% { transform: translateX(-50%) scale(0.9); box-shadow: 0 0 12px #38bdf8; }
+            100% { transform: translateX(-50%) scale(1.15); box-shadow: 0 0 28px #00f2fe, 0 0 45px #38bdf8; }
+        }
+
+        .robot-head-3d {
+            width: 138px;
+            height: 102px;
+            border-radius: 48px 48px 42px 42px;
+            background: radial-gradient(circle at 30% 25%, #ffffff 0%, #e2e8f0 35%, #94a3b8 75%, #475569 100%);
+            box-shadow: 
+                inset -8px -10px 18px rgba(15, 23, 42, 0.45),
+                inset 6px 8px 15px rgba(255, 255, 255, 0.9),
+                0 15px 25px rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 4;
+            transition: transform 0.3s ease;
+        }
+
+        .robot-3d-body-group:hover .robot-head-3d {
+            transform: rotateZ(-4deg) scale(1.04);
+        }
+
+        .robot-head-3d::before,
+        .robot-head-3d::after {
+            content: "";
+            position: absolute;
+            top: 32px;
+            width: 14px;
+            height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #38bdf8, #0284c7, #1e3a8a);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+        }
+        .robot-head-3d::before { left: -10px; }
+        .robot-head-3d::after { right: -10px; }
+
+        .robot-visor {
+            width: 108px;
+            height: 62px;
+            border-radius: 30px;
+            background: radial-gradient(circle at 50% 20%, #1e293b 0%, #090d16 85%);
+            box-shadow: 
+                inset 0 4px 10px rgba(56, 189, 248, 0.35),
+                inset 0 -4px 10px rgba(0, 0, 0, 0.9),
+                0 2px 6px rgba(255, 255, 255, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .robot-visor::before {
+            content: "";
+            position: absolute;
+            top: -20px;
+            left: -25px;
+            width: 60px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.08);
+            transform: rotate(28deg);
+            pointer-events: none;
+        }
+
+        .robot-eyes-row {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .robot-eye {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #ffffff, #38bdf8 55%, #0284c7);
+            box-shadow: 0 0 14px #38bdf8, 0 0 24px #00f2fe;
+            animation: blinkEyes 4.5s infinite;
+            transition: all 0.2s ease;
+        }
+
+        @keyframes blinkEyes {
+            0%, 46%, 50%, 96%, 100% { transform: scaleY(1); }
+            48%, 98% { transform: scaleY(0.1); }
+        }
+
+        .robot-mouth {
+            width: 20px;
+            height: 5px;
+            border-radius: 10px;
+            background: #38bdf8;
+            box-shadow: 0 0 10px #38bdf8;
+            margin-top: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .robot-speaking .robot-mouth {
+            animation: speakWave 0.25s infinite alternate;
+        }
+        @keyframes speakWave {
+            0% { width: 14px; height: 4px; border-radius: 10px; }
+            100% { width: 28px; height: 11px; border-radius: 50%; background: #00f2fe; }
+        }
+
+        .robot-torso-3d {
+            width: 112px;
+            height: 118px;
+            margin-top: 8px;
+            border-radius: 34px 34px 56px 56px;
+            background: radial-gradient(circle at 32% 25%, #ffffff 0%, #e2e8f0 38%, #94a3b8 76%, #334155 100%);
+            box-shadow: 
+                inset -10px -14px 22px rgba(15, 23, 42, 0.5),
+                inset 8px 8px 16px rgba(255, 255, 255, 0.9),
+                0 18px 30px rgba(0, 0, 0, 0.45);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 3;
+        }
+
+        .robot-core {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffffff 10%, #38bdf8 55%, #1d4ed8 90%);
+            border: 3px solid #cbd5e1;
+            box-shadow: 0 0 20px #38bdf8, inset 0 0 10px #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0b1d3a;
+            font-size: 1.15rem;
+            animation: corePulse 2s infinite alternate;
+        }
+
+        @keyframes corePulse {
+            0% { box-shadow: 0 0 14px #38bdf8; transform: scale(0.96); }
+            100% { box-shadow: 0 0 28px #00f2fe, 0 0 40px #38bdf8; transform: scale(1.04); }
+        }
+
+        .robot-arm {
+            position: absolute;
+            top: 120px;
+            width: 28px;
+            height: 76px;
+            border-radius: 20px;
+            background: radial-gradient(circle at 35% 30%, #ffffff, #cbd5e1 55%, #475569 100%);
+            box-shadow: 
+                inset -4px -6px 10px rgba(15, 23, 42, 0.5),
+                0 12px 20px rgba(0, 0, 0, 0.4);
+        }
+        .robot-arm.left {
+            left: -38px;
+            transform: rotate(14deg);
+            animation: armLeftFloat 3.6s ease-in-out infinite;
+        }
+        .robot-arm.right {
+            right: -38px;
+            transform: rotate(-14deg);
+            animation: armRightFloat 3.6s ease-in-out infinite;
+        }
+
+        @keyframes armLeftFloat {
+            0%, 100% { transform: translateY(0px) rotate(14deg); }
+            50% { transform: translateY(-10px) rotate(24deg); }
+        }
+        @keyframes armRightFloat {
+            0%, 100% { transform: translateY(0px) rotate(-14deg); }
+            50% { transform: translateY(-10px) rotate(-24deg); }
+        }
+
+        .robot-hover-ring {
+            width: 115px;
+            height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse, rgba(56, 189, 248, 0.65) 0%, rgba(13, 110, 253, 0.2) 60%, transparent 80%);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+            margin-top: 22px;
+            animation: shadowScale 3.6s ease-in-out infinite;
+        }
+
+        @keyframes shadowScale {
+            0%, 100% { transform: scale(1); opacity: 0.85; }
+            50% { transform: scale(0.68); opacity: 0.45; }
+        }
+
+        /* ==============================================================
+           PANEL DE CHAT INTERACTIVO ILIMITADO Y CALIFICACIÓN 5 ESTRELLAS
+           ============================================================== */
+        .chat-master-card {
+            background: #ffffff;
+            color: #1e293b;
+            border-radius: 26px;
+            padding: 30px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            min-height: 560px;
+        }
+
+        .chat-history-box {
+            flex-grow: 1;
+            height: 330px;
+            overflow-y: auto;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .bubble-bot {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            color: #0f172a;
+            padding: 12px 16px;
+            border-radius: 18px 18px 18px 4px;
+            margin-bottom: 12px;
+            max-width: 82%;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1);
+            font-size: 0.88rem;
+        }
+
+        .bubble-user {
+            background: linear-gradient(135deg, #205493 0%, #0b1d3a 100%);
+            color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 18px 18px 4px 18px;
+            margin-bottom: 12px;
+            margin-left: auto;
+            max-width: 82%;
+            box-shadow: 0 4px 12px rgba(32, 84, 147, 0.25);
+            font-size: 0.88rem;
+        }
+
+        .quick-chip {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+            border-radius: 50px;
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .quick-chip:hover {
+            background: #205493;
+            color: #ffffff;
+            border-color: #205493;
+            transform: translateY(-2px);
+        }
+
+        /* Caja de 5 estrellas tras 3 respuestas */
+        .rating-box-highlight {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 15px;
+            animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .star-rating i {
+            font-size: 1.65rem;
+            color: #cbd5e1;
+            cursor: pointer;
+            margin: 0 3px;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .star-rating i.active,
+        .star-rating i:hover {
+            color: #f59e0b;
+            transform: scale(1.18);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA DE CARGA CIRCULAR AZUL -->
+    <div id="blueLoadingOverlay">
+        <div class="modern-blue-spinner mb-3"></div>
+        <h6 class="text-white fw-bold mb-1" id="loadingText">Iniciando Asistente Virtual 3D...</h6>
+        <small class="text-info">Politécnico Salesiano Cristo Rey</small>
+    </div>
+
+    <!-- BARRA DE NAVEGACIÓN ENTRE TODAS LAS PESTAÑAS DEL MÓDULO 2 -->
+    <nav class="navbar navbar-dark navbar-custom sticky-top shadow-sm mb-4">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <a href="docente.html" onclick="irConCarga(event, 'docente.html', 'Volviendo al Panel Docente...')" class="navbar-brand fw-bold fs-6 m-0 d-flex align-items-center">
+                <i class="bi bi-robot me-2 text-info fs-4"></i>
+                <span>Politécnico Salesiano Cristo Rey <span class="text-white-50 mx-1">|</span> Asistente Virtual 3D</span>
+            </a>
+
+            <div class="d-flex flex-wrap align-items-center gap-2 font-ui">
+                <a href="docente.html" onclick="irConCarga(event, 'docente.html', 'Cargando Panel Docente...')" class="nav-pill-link">
+                    <i class="bi bi-speedometer2 me-1"></i> Panel Docente
+                </a>
+                <a href="Boletin.html" onclick="irConCarga(event, 'Boletin.html', 'Cargando Boletines...')" class="nav-pill-link">
+                    <i class="bi bi-award me-1"></i> Boletines
+                </a>
+                <a href="conducta.html" onclick="irConCarga(event, 'conducta.html', 'Cargando Fichas de Conducta...')" class="nav-pill-link">
+                    <i class="bi bi-shield-exclamation me-1"></i> Conducta
+                </a>
+                <a href="cv.html" onclick="irConCarga(event, 'cv.html', 'Cargando Currículum Docente...')" class="nav-pill-link">
+                    <i class="bi bi-person-vcard me-1"></i> Mi CV
+                </a>
+                <a href="asistente.html" class="nav-pill-link active">
+                    <i class="bi bi-cpu-fill me-1"></i> Asistente 3D
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="container my-4">
+        <div class="row g-4 align-items-stretch">
+            
+            <!-- COLUMNA IZQUIERDA: ROBOT 3D QUE FLOTA -->
+            <div class="col-lg-5">
+                <div class="robot-stage-card text-center">
+                    <div>
+                        <span class="badge bg-info text-dark fw-bold px-3 py-2 rounded-pill font-ui mb-2">
+                            <i class="bi bi-infinity me-1"></i> Consultas Ilimitadas Activas
+                        </span>
+                        <h4 class="fw-bold mb-1">REY-BOT 3D</h4>
+                        <p class="small text-info mb-0 font-ui" id="estadoVozRobot">Flotando en línea · Pregúntame sin límite</p>
+                    </div>
+
+                    <!-- ESCENA DEL ROBOT 3D -->
+                    <div class="robot-3d-scene" onclick="saludoInteractivoRobot()" title="¡Haz clic sobre mí para saludarme!">
+                        <div class="robot-3d-body-group" id="robot3DElemento">
+                            <div class="robot-antenna"></div>
+                            <div class="robot-head-3d">
+                                <div class="robot-visor">
+                                    <div class="robot-eyes-row">
+                                        <div class="robot-eye"></div>
+                                        <div class="robot-eye"></div>
+                                    </div>
+                                    <div class="robot-mouth"></div>
+                                </div>
+                            </div>
+                            <div class="robot-arm left"></div>
+                            <div class="robot-torso-3d">
+                                <div class="robot-core">
+                                    <i class="bi bi-mortarboard-fill"></i>
+                                </div>
+                            </div>
+                            <div class="robot-arm right"></div>
+                        </div>
+                        <div class="robot-hover-ring"></div>
+                    </div>
+
+                    <!-- Indicador de Consultas Infinitas -->
+                    <div class="w-100 bg-dark bg-opacity-50 p-3 rounded-4 border border-info border-opacity-25 font-ui">
+                        <div class="d-flex justify-content-between align-items-center small mb-2">
+                            <span class="text-white-50">Respuestas brindadas hoy:</span>
+                            <strong class="text-info fs-6"><span id="contadorRespuestasVista">0</span> / ∞ (Infinitas)</strong>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center gap-2 text-success small fw-semibold">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Chat abierto permanentemente sin límite de preguntas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: CONSOLA DE CHAT ILIMITADA -->
+            <div class="col-lg-7">
+                <div class="chat-master-card font-ui">
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                        <div>
+                            <h5 class="fw-bold text-dark m-0">Centro de Consultas Ilimitadas (Módulo Docente)</h5>
+                            <small class="text-muted">Puedes preguntar todas las veces que desees sobre cualquier función del sistema.</small>
+                        </div>
+                        <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="reiniciarConversacion()">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Limpiar Chat
+                        </button>
+                    </div>
+
+                    <!-- Historial de Mensajes -->
+                    <div class="chat-history-box" id="contenedorMensajes">
+                        <div class="bubble-bot">
+                            <strong>🤖 REY-BOT 3D:</strong> ¡Hola, profe! Soy tu asistente tridimensional del Politécnico Salesiano Cristo Rey. Puedes hacerme <strong>preguntas infinitas (∞)</strong> todas las veces que quieras. ¿En qué te ayudo ahora?
+                        </div>
+                    </div>
+
+                    <!-- CAJA DE CALIFICACIÓN DE 5 ESTRELLAS (Aparece al cumplir 3 respuestas sin bloquear el chat) -->
+                    <div id="cajaCincoEstrellas" class="rating-box-highlight d-none">
+                        <button type="button" class="btn-close position-absolute top-0 end-0 m-2" style="font-size: 0.75rem;" onclick="cerrarEncuestaEstrellas()" title="Cerrar y seguir preguntando"></button>
+                        <div class="text-center">
+                            <span class="badge bg-warning text-dark fw-bold mb-1">Calificación del Asistente Virtual</span>
+                            <h6 class="fw-bold text-dark mb-1">«Ayúdanos a mejorar como equipo»</h6>
+                            <div class="star-rating my-2">
+                                <i class="bi bi-star-fill active" onclick="marcarEstrellas(1)"></i>
+                                <i class="bi bi-star-fill active" onclick="marcarEstrellas(2)"></i>
+                                <i class="bi bi-star-fill active" onclick="marcarEstrellas(3)"></i>
+                                <i class="bi bi-star-fill active" onclick="marcarEstrellas(4)"></i>
+                                <i class="bi bi-star-fill active" onclick="marcarEstrellas(5)"></i>
+                            </div>
+                            <div class="input-group input-group-sm mt-2">
+                                <input type="text" id="comentarioEstrellas" class="form-control bg-white" placeholder="Escribe un comentario opcional (puedes seguir chateando sin límite)...">
+                                <button class="btn btn-dark fw-bold px-3" type="button" onclick="guardarCalificacionEquipo()">
+                                    <i class="bi bi-send-check me-1"></i> Enviar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de sugerencias rápidas (se pueden pulsar infinitas veces) -->
+                    <div class="mb-3">
+                        <small class="text-muted fw-bold d-block mb-2">Consultas rápidas (Haz clic cuantas veces quieras):</small>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="button" class="quick-chip" onclick="hacerPreguntaRapida('¿Cómo funciona la asistencia con P, A, T y E?')">
+                                📋 Asistencia (P, A, T, E)
+                            </button>
+                            <button type="button" class="quick-chip" onclick="hacerPreguntaRapida('¿Dónde veo mi horario individual docente?')">
+                                🕒 Mi Horario Individual
+                            </button>
+                            <button type="button" class="quick-chip" onclick="hacerPreguntaRapida('¿Cuándo obtiene un alumno la estrella de Meritorio?')">
+                                ⭐ Boletín Meritorio
+                            </button>
+                            <button type="button" class="quick-chip" onclick="hacerPreguntaRapida('¿Cómo edito mi CV y cambio mi foto desde archivos?')">
+                                🪪 Editar CV y Foto
+                            </button>
+                            <button type="button" class="quick-chip" onclick="hacerPreguntaRapida('¿Cómo envío una ficha de conducta?')">
+                                ⚠️ Fichas de Conducta
+                            </button>
+                            <button type="button" class="quick-chip" onclick="hacerPreguntaRapida('¿Qué ocurre el 29 de junio al fin del año escolar?')">
+                                📅 Reinicio 29 de Junio
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Barra de escritura siempre activa -->
+                    <div class="input-group">
+                        <input type="text" id="inputMensajeDocente" class="form-control form-control-lg fs-6" placeholder="Escribe cualquier pregunta (Consultas infinitas ∞)..." onkeypress="if(event.key==='Enter') enviarMensajeDocente()">
+                        <button class="btn btn-primary px-4 fw-bold" type="button" onclick="enviarMensajeDocente()">
+                            <i class="bi bi-send-fill me-1"></i> Preguntar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let totalRespuestasDadas = 0;
+        let calificacionActual = 5;
+        let encuestaMostrada = false;
+
+        function irConCarga(event, url, texto) {
+            event.preventDefault();
+            const overlay = document.getElementById('blueLoadingOverlay');
+            document.getElementById('loadingText').innerText = texto;
+            overlay.classList.remove('hidden-loader');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 550);
+        }
+
+        function animarHablaRobot(duracion = 1400) {
+            const robot = document.getElementById('robot3DElemento');
+            const estado = document.getElementById('estadoVozRobot');
+            robot.classList.add('robot-speaking');
+            estado.innerText = 'Respondiendo consulta en tiempo real...';
+
+            setTimeout(() => {
+                robot.classList.remove('robot-speaking');
+                estado.innerText = 'Flotando en línea · Pregúntame sin límite';
+            }, duracion);
+        }
+
+        function saludoInteractivoRobot() {
+            animarHablaRobot(1200);
+            const chat = document.getElementById('contenedorMensajes');
+            chat.innerHTML += `
+                <div class="bubble-bot">
+                    <strong>🤖 REY-BOT 3D:</strong> ¡Sistemas al 100%! Puedes seguir haciéndome todas las preguntas que necesites sin ningún límite.
+                </div>
+            `;
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function hacerPreguntaRapida(pregunta) {
+            document.getElementById('inputMensajeDocente').value = pregunta;
+            enviarMensajeDocente();
+        }
+
+        function generarRespuestaInteligente(texto) {
+            const t = texto.toLowerCase();
+            if (t.includes('asistencia') || t.includes('tardanza') || t.includes('excusa') || t.includes('p, a')) {
+                return 'En el Registro Diario puedes marcar <strong>P</strong> (Presente), <strong>A</strong> (Ausente), <strong>T</strong> (Tardanza) y <strong>E</strong> (Excusa). Cada clase guardada se envía en tiempo real a Administración y a las 3:30 p. m. se consolida el día.';
+            }
+            if (t.includes('horario')) {
+                return 'Tu horario individual está en el Panel Docente construido como tabla oficial del Politécnico Salesiano Cristo Rey, mostrando tus bloques de clase, recreo (10:30-11:00), almuerzo (12:45-13:45) y horas libres.';
+            }
+            if (t.includes('meritorio') || t.includes('boletin') || t.includes('estrella') || t.includes('nota')) {
+                return 'En <strong>Boletin.html</strong>, todo estudiante con promedio igual o superior a <strong>90 puntos</strong> recibe automáticamente bordes dorados brillantes, la insignia <em>"Meritorio!!!"</em> y un reconocimiento a su excelencia.';
+            }
+            if (t.includes('cv') || t.includes('curriculum') || t.includes('foto')) {
+                return 'En <strong>cv.html</strong> puedes hacer clic sobre cualquier texto para editarlo directamente y pulsar sobre tu foto circular para elegir una imagen nueva desde tus archivos locales.';
+            }
+            if (t.includes('29 de junio') || t.includes('fin de año') || t.includes('reinicio')) {
+                return 'Al completarse el P4 y llegar el <strong>29 de junio</strong>, el sistema limpia automáticamente las boletas, asistencias y horarios, actualizando el año escolar al nuevo período.';
+            }
+            if (t.includes('conducta') || t.includes('ficha') || t.includes('reporte')) {
+                return 'Desde el botón "Reportar" en la asistencia puedes abrir <strong>conducta.html</strong>. Las fichas nuevas se envían con estado <em>"Sin revisar"</em> y recibirás una notificación cuando Dirección las evalúe.';
+            }
+
+            // Respuestas variadas para conversaciones infinitas
+            const respuestasVariadas = [
+                '¡Excelente consulta! Todos los módulos de tu panel docente (Calificaciones, Asistencia P/A/T/E, Consolidado, Horario, Boletines y CV) están activos y sincronizados. ¿Qué más deseas saber?',
+                'Recuerda que puedes usar las pestañas superiores en el Panel Docente para filtrar únicamente la sección que estés trabajando. ¡Sigue preguntándome todo lo que quieras!',
+                'Como asistente del Politécnico Salesiano Cristo Rey, te confirmo que tus registros se guardan de inmediato en el navegador. ¿Tienes otra duda sobre tus cursos o estudiantes?'
+            ];
+            return respuestasVariadas[totalRespuestasDadas % respuestasVariadas.length];
+        }
+
+        function enviarMensajeDocente() {
+            const input = document.getElementById('inputMensajeDocente');
+            const pregunta = input.value.trim();
+            if (!pregunta) return;
+
+            const chat = document.getElementById('contenedorMensajes');
+            chat.innerHTML += `<div class="bubble-user">${pregunta}</div>`;
+            input.value = '';
+            input.focus();
+            chat.scrollTop = chat.scrollHeight;
+
+            setTimeout(() => {
+                animarHablaRobot(1500);
+                totalRespuestasDadas++;
+                const respuesta = generarRespuestaInteligente(pregunta);
+                chat.innerHTML += `<div class="bubble-bot"><strong>🤖 REY-BOT 3D (Respuesta #${totalRespuestasDadas}):</strong> ${respuesta}</div>`;
+                document.getElementById('contadorRespuestasVista').innerText = totalRespuestasDadas;
+
+                // Mostrar la caja de 5 estrellas al llegar a la 3ra respuesta (sin bloquear futuras preguntas)
+                if (totalRespuestasDadas === 3 && !encuestaMostrada) {
+                    encuestaMostrada = true;
+                    document.getElementById('cajaCincoEstrellas').classList.remove('d-none');
+                }
+
+                chat.scrollTop = chat.scrollHeight;
+            }, 350);
+        }
+
+        function marcarEstrellas(num) {
+            calificacionActual = num;
+            const iconos = document.querySelectorAll('#cajaCincoEstrellas .star-rating i');
+            iconos.forEach((ic, idx) => {
+                if (idx < num) ic.classList.add('active');
+                else ic.classList.remove('active');
+            });
+        }
+
+        function cerrarEncuestaEstrellas() {
+            document.getElementById('cajaCincoEstrellas').classList.add('d-none');
+        }
+
+        function guardarCalificacionEquipo() {
+            const caja = document.getElementById('cajaCincoEstrellas');
+            caja.innerHTML = `
+                <div class="text-center text-success fw-bold py-1">
+                    <i class="bi bi-check-circle-fill fs-5 me-1"></i> ¡Gracias por calificarnos con ${calificacionActual} estrellas! Puedes seguir haciendo preguntas infinitas abajo.
+                </div>
+            `;
+            setTimeout(() => {
+                caja.classList.add('d-none');
+            }, 2500);
+        }
+
+        function reiniciarConversacion() {
+            totalRespuestasDadas = 0;
+            encuestaMostrada = false;
+            document.getElementById('contadorRespuestasVista').innerText = '0';
+            document.getElementById('cajaCincoEstrellas').classList.add('d-none');
+            document.getElementById('contenedorMensajes').innerHTML = `
+                <div class="bubble-bot">
+                    <strong>🤖 REY-BOT 3D:</strong> Historial limpio. Recuerda que tienes <strong>consultas infinitas (∞)</strong> disponibles.
+                </div>
+            `;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('blueLoadingOverlay').classList.add('hidden-loader');
+            }, 550);
+        });
+    </script>
+</body>
+</html>

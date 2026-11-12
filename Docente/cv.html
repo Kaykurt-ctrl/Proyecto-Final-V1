@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currículum del Docente - Politécnico Salesiano Cristo Rey</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts: Merriweather, Montserrat y Sacramento -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Montserrat:wght@400;600;700;800&family=Sacramento&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0b1d3a, #102a4c, #1a365d, #0f172a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background-image: 
+                radial-gradient(circle, rgba(147, 197, 253, 0.15) 10px, transparent 12px),
+                radial-gradient(circle, rgba(96, 165, 250, 0.12) 25px, transparent 28px),
+                radial-gradient(circle, rgba(191, 219, 254, 0.1) 40px, transparent 45px);
+            background-size: 300px 300px, 450px 450px, 600px 600px;
+            animation: floatBokeh 20s linear infinite;
+        }
+
+        @keyframes floatBokeh {
+            0% { background-position: 0 0, 100px 150px, 200px 50px; }
+            100% { background-position: 300px 300px, 400px 450px, 500px 650px; }
+        }
+
+        .navbar {
+            font-family: 'Merriweather', serif;
+        }
+
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #28a745;
+        }
+
+        .profile-link-active {
+            color: #93c5fd;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Botón interactivo superior para activar/resaltar la edición completa */
+        .btn-edit-master {
+            background-color: #0dcaf0;
+            color: #0b1d3a;
+            border: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(13, 202, 240, 0.3);
+        }
+
+        .btn-edit-master:hover, .btn-edit-master.active-mode {
+            background-color: #ffc107;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 193, 7, 0.45);
+        }
+
+        /* Contenedor principal de la hoja de CV */
+        .cv-sheet {
+            max-width: 1020px;
+            margin: 25px auto 45px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+            animation: floatLoop 5s ease-in-out infinite;
+        }
+
+        @keyframes floatLoop {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        /* COLUMNA IZQUIERDA */
+        .cv-left {
+            background-color: #102a4c;
+            background-image: url("data:image/svg+xml,%3Csvg width='400' height='800' viewBox='0 0 400 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-50 100 C 150 200, 50 400, 250 500 C 350 550, 200 700, 450 800' stroke='rgba(255,255,255,0.06)' stroke-width='3' fill='none'/%3E%3Cpath d='M-50 250 C 200 150, 150 450, 350 350 C 450 300, 250 650, 450 700' stroke='rgba(255,255,255,0.05)' stroke-width='2' fill='none'/%3E%3Cpath d='M50 -50 C 100 200, 300 150, 200 400 C 100 650, 350 600, 300 850' stroke='rgba(147,197,253,0.07)' stroke-width='2.5' fill='none'/%3E%3C/svg%3E");
+            background-size: cover;
+            color: #ffffff;
+            padding: 45px 35px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cv-role-top {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #93c5fd;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .cv-script-name {
+            font-family: 'Sacramento', cursive;
+            font-size: 5rem;
+            color: #60a5fa;
+            line-height: 0.85;
+            text-align: center;
+            margin-top: 10px;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .cv-lastname {
+            font-size: 1.55rem;
+            letter-spacing: 3.5px;
+            text-transform: uppercase;
+            font-weight: 300;
+            color: #e2e8f0;
+            text-align: right;
+            padding-right: 15px;
+            margin-top: -8px;
+            margin-bottom: 25px;
+        }
+
+        /* Contenedor de foto circular interactiva con selector de archivos */
+        .photo-protrude-wrapper {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 15px auto 35px auto;
+            transform: translateX(35px);
+            border-radius: 50%;
+            background-color: #102a4c;
+            padding: 14px;
+            box-shadow: 12px 0 25px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .photo-protrude-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid rgba(147, 197, 253, 0.4);
+            transition: filter 0.3s ease;
+        }
+
+        /* Capa superpuesta al pasar el cursor sobre la foto para subir archivo */
+        .photo-overlay {
+            position: absolute;
+            inset: 14px;
+            border-radius: 50%;
+            background: rgba(11, 29, 58, 0.72);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            backdrop-filter: blur(3px);
+        }
+
+        .photo-protrude-wrapper:hover .photo-overlay,
+        .editing-active .photo-overlay {
+            opacity: 1;
+        }
+
+        .sobre-mi-title {
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            border-bottom: 2px solid rgba(147, 197, 253, 0.35);
+            padding-bottom: 6px;
+        }
+
+        .sobre-mi-text {
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: #cbd5e1;
+            text-align: justify;
+            margin-bottom: 35px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 0.82rem;
+            color: #e2e8f0;
+        }
+
+        .contact-icon {
+            font-size: 1.35rem;
+            color: #93c5fd;
+            width: 32px;
+            text-align: center;
+        }
+
+        .contact-dots {
+            flex-grow: 1;
+            margin: 0 12px;
+            letter-spacing: 5px;
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        /* COLUMNA DERECHA */
+        .cv-right {
+            background-color: #ffffff;
+            padding: 45px 45px 45px 60px;
+            color: #334155;
+        }
+
+        .cv-section-block {
+            padding-bottom: 22px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #e2e8f0;
+            position: relative;
+        }
+
+        .cv-section-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .cv-section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            background: #f8fafc;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border-left: 5px solid #102a4c;
+        }
+
+        .cv-section-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #0b1d3a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        .header-dots {
+            margin: 0 14px;
+            color: #205493;
+            font-size: 0.9rem;
+            letter-spacing: 6px;
+        }
+
+        .header-icon {
+            font-size: 1.45rem;
+            color: #205493;
+            margin-left: auto;
+        }
+
+        .cv-item {
+            margin-bottom: 14px;
+            padding: 6px 28px 6px 12px;
+            border-left: 2px solid #cbd5e1;
+            position: relative;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .cv-item:hover {
+            border-left-color: #205493;
+            background-color: #f8fafc;
+        }
+
+        /* Botón para eliminar un bloque individual */
+        .btn-delete-item {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            border: none;
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .cv-item:hover .btn-delete-item,
+        .editing-active .btn-delete-item {
+            opacity: 1;
+        }
+
+        .btn-delete-item:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        /* Botón para añadir nuevos registros a cada sección */
+        .btn-add-item {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #205493;
+            background: #eff6ff;
+            border: 1px dashed #93c5fd;
+            border-radius: 6px;
+            padding: 4px 12px;
+            margin-top: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-add-item:hover {
+            background: #205493;
+            color: #ffffff;
+            border-style: solid;
+        }
+
+        .cv-year {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #205493;
+        }
+
+        .cv-place {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .cv-desc {
+            font-size: 0.83rem;
+            color: #64748b;
+            margin-top: 2px;
+            margin-bottom: 0;
+        }
+
+        /* Campos editables y modo edición resaltado */
+        [contenteditable="true"] {
+            outline: none;
+            border-radius: 4px;
+            padding: 2px 4px;
+            transition: box-shadow 0.2s ease, background-color 0.2s ease;
+        }
+
+        [contenteditable="true"]:hover {
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+        }
+
+        [contenteditable="true"]:focus {
+            box-shadow: 0 0 0 2px #0dcaf0;
+            background-color: rgba(13, 202, 240, 0.1);
+        }
+
+        .editing-active [contenteditable="true"] {
+            box-shadow: 0 0 0 1px dashed rgba(13, 202, 240, 0.65);
+        }
+
+        .btn-institutional {
+            background-color: #205493;
+            color: white;
+        }
+        .btn-institutional:hover {
+            background-color: #1a446d;
+            color: white;
+        }
+
+        @media (max-width: 991px) {
+            .photo-protrude-wrapper {
+                transform: translateX(0);
+            }
+            .cv-right {
+                padding: 35px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra Superior Conectada -->
+    <nav class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container-fluid">
+            <a href="docente.html" class="navbar-brand fw-bold fs-6 text-decoration-none">
+                <i class="bi bi-mortarboard-fill me-2 text-info"></i>Politécnico Salesiano Cristo Rey | Módulo Docente
+            </a>
+            <div class="d-flex align-items-center text-white small">
+                <a href="docente.html" class="profile-link-active" title="Volver al Panel Docente">
+                    <span class="status-dot me-2"></span> Docente Activo (Mi CV)
+                </a>
+                <a href="login.html" class="btn btn-outline-light btn-sm ms-2">Salir</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Input oculto para subir foto desde archivos o galería -->
+    <input type="file" id="inputFotoArchivo" accept="image/*" class="d-none">
+
+    <div class="container px-3">
+        <!-- Barra de herramientas de edición completa -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mx-auto mt-4 gap-2" style="max-width: 1020px;">
+            <div class="d-flex flex-wrap gap-2">
+                <!-- Botón principal de edición total -->
+                <button type="button" id="btnToggleEdicion" class="btn-edit-master" onclick="activarModoEdicionTotal()">
+                    <i class="bi bi-pencil-fill me-1"></i> Haz clic sobre cualquier texto del CV para editarlo directamente
+                </button>
+                <!-- Botón directo para cambiar foto desde archivos -->
+                <button type="button" class="btn btn-light btn-sm fw-bold shadow-sm border" onclick="abrirSelectorFoto()">
+                    <i class="bi bi-camera-fill text-primary me-1"></i> Cambiar Foto desde Archivos
+                </button>
+            </div>
+
+            <div class="d-flex gap-2">
+                <a href="docente.html" class="btn btn-secondary btn-sm shadow-sm">
+                    <i class="bi bi-arrow-left me-1"></i> Volver al Panel
+                </a>
+                <button type="button" class="btn btn-institutional btn-sm fw-bold px-4 shadow-sm" onclick="guardarTodoElCV()">
+                    <i class="bi bi-floppy-fill me-1"></i> Guardar Cambios
+                </button>
+            </div>
+        </div>
+
+        <!-- HOJA DEL CURRÍCULUM COMPLETAMENTE EDITABLE -->
+        <div class="cv-sheet" id="hojaCV">
+            <div class="row g-0">
+                
+                <!-- COLUMNA IZQUIERDA -->
+                <div class="col-lg-5 cv-left d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="cv-role-top" contenteditable="true" id="editRol">
+                            DOCENTE DE INFORMÁTICA Y APLICACIONES
+                        </div>
+                        <div class="cv-script-name" contenteditable="true" id="editNombre">
+                            Carlos
+                        </div>
+                        <div class="cv-lastname" contenteditable="true" id="editApellido">
+                            CUEVAS ALCÁNTARA
+                        </div>
+
+                        <!-- Fotografía Circular con acceso directo a archivos locales -->
+                        <div class="photo-protrude-wrapper" onclick="abrirSelectorFoto()" title="Haz clic para cambiar la foto desde tus archivos">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt="Foto del Docente" id="fotoDocente">
+                            <div class="photo-overlay">
+                                <i class="bi bi-folder2-open fs-2 mb-1 text-info"></i>
+                                <span>Cambiar foto desde tus archivos</span>
+                            </div>
+                        </div>
+
+                        <!-- Sección SOBRE MÍ -->
+                        <div class="mt-2">
+                            <h3 class="sobre-mi-title" contenteditable="true" id="editTituloSobreMi">SOBRE MÍ</h3>
+                            <p class="sobre-mi-text" contenteditable="true" id="editTextoSobreMi">
+                                Mi experiencia profesional abarca las asignaturas técnicas de Desarrollo y Administración de Aplicaciones Informáticas en el nivel secundario técnico, además de haber ejercido funciones de tutoría y coordinación de proyectos tecnológicos en los últimos cursos académicos. Poseo un alto dominio en programación, bases de datos y aplicación de las TIC en la educación salesiana.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Datos de Contacto Editables -->
+                    <div class="mt-3 pt-3 border-top border-secondary border-opacity-50" id="bloqueContacto">
+                        <div class="contact-item">
+                            <span class="contact-icon"><i class="bi bi-at"></i></span>
+                            <span class="contact-dots">• • • • • •</span>
+                            <span contenteditable="true" id="editEmail">c.cuevas@cristorey.edu.do</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon"><i class="bi bi-telephone"></i></span>
+                            <span class="contact-dots">• • • • • •</span>
+                            <span contenteditable="true" id="editTel">(809) 524-0000</span>
+                        </div>
+                        <div class="contact-item mb-0">
+                            <span class="contact-icon"><i class="bi bi-geo-alt"></i></span>
+                            <span class="contact-dots">• • • • • •</span>
+                            <span contenteditable="true" id="editUbicacion">Barahona, Rep. Dom.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMNA DERECHA -->
+                <div class="col-lg-7 cv-right" id="columnaDerechaCV">
+                    
+                    <!-- SECCIÓN 1: FORMACIÓN ACADÉMICA -->
+                    <div class="cv-section-block">
+                        <div class="cv-section-header">
+                            <h4 class="cv-section-title" contenteditable="true">FORMACIÓN ACADÉMICA</h4>
+                            <span class="header-dots">• • •</span>
+                            <i class="bi bi-pencil header-icon"></i>
+                        </div>
+
+                        <div id="listaFormacion">
+                            <div class="cv-item">
+                                <button type="button" class="btn-delete-item" onclick="eliminarItem(this)" title="Eliminar bloque"><i class="bi bi-x-lg"></i></button>
+                                <div class="cv-year" contenteditable="true">2022 – 2024</div>
+                                <div class="cv-place" contenteditable="true">Instituto Superior de Formación Docente Salomé Ureña (ISFODOSU)</div>
+                                <p class="cv-desc" contenteditable="true">Máster en Habilitación Docente y Gestión de Entornos Digitales en Educación Secundaria.</p>
+                            </div>
+
+                            <div class="cv-item">
+                                <button type="button" class="btn-delete-item" onclick="eliminarItem(this)" title="Eliminar bloque"><i class="bi bi-x-lg"></i></button>
+                                <div class="cv-year" contenteditable="true">2017 – 2021</div>
+                                <div class="cv-place" contenteditable="true">Universidad Católica Tecnológica de Barahona (UCATEBA)</div>
+                                <p class="cv-desc" contenteditable="true">Ingeniería en Sistemas y Computación. Especialidad en Desarrollo de Software y Bases de Datos.</p>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-add-item" onclick="agregarItem('listaFormacion', '2025 – 2026', 'Nombre de la Institución o Universidad', 'Título o especialidad obtenida.')">
+                            <i class="bi bi-plus-circle-fill"></i> Añadir formación
+                        </button>
+                    </div>
+
+                    <!-- SECCIÓN 2: CURSOS Y SEMINARIOS -->
+                    <div class="cv-section-block">
+                        <div class="cv-section-header">
+                            <h4 class="cv-section-title" contenteditable="true">CURSOS Y SEMINARIOS</h4>
+                            <span class="header-dots">• • •</span>
+                            <i class="bi bi-lightbulb header-icon"></i>
+                        </div>
+
+                        <div id="listaCursos">
+                            <div class="cv-item">
+                                <button type="button" class="btn-delete-item" onclick="eliminarItem(this)" title="Eliminar bloque"><i class="bi bi-x-lg"></i></button>
+                                <div class="cv-year" contenteditable="true">2025</div>
+                                <div class="cv-place" contenteditable="true">INFOTEP - Regional Sur</div>
+                                <p class="cv-desc" contenteditable="true">El uso de las nuevas tecnologías y metodologías ágiles en el aula técnica. 120 horas.</p>
+                            </div>
+
+                            <div class="cv-item">
+                                <button type="button" class="btn-delete-item" onclick="eliminarItem(this)" title="Eliminar bloque"><i class="bi bi-x-lg"></i></button>
+                                <div class="cv-year" contenteditable="true">2024</div>
+                                <div class="cv-place" contenteditable="true">Ministerio de Educación (MINERD)</div>
+                                <p class="cv-desc" contenteditable="true">Estrategias Didácticas Basadas en Competencias para el Bachillerato Técnico en Informática. 100 horas.</p>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-add-item" onclick="agregarItem('listaCursos', '2026', 'Centro o Institución Formadora', 'Descripción del curso, diplomado o seminario y cantidad de horas.')">
+                            <i class="bi bi-plus-circle-fill"></i> Añadir curso o seminario
+                        </button>
+                    </div>
+
+                    <!-- SECCIÓN 3: EXPERIENCIA DOCENTE -->
+                    <div class="cv-section-block">
+                        <div class="cv-section-header">
+                            <h4 class="cv-section-title" contenteditable="true">EXPERIENCIA DOCENTE</h4>
+                            <span class="header-dots">• • •</span>
+                            <i class="bi bi-bullseye header-icon"></i>
+                        </div>
+
+                        <div id="listaExperiencia">
+                            <div class="cv-item">
+                                <button type="button" class="btn-delete-item" onclick="eliminarItem(this)" title="Eliminar bloque"><i class="bi bi-x-lg"></i></button>
+                                <div class="cv-year" contenteditable="true">2024 – 2026</div>
+                                <div class="cv-place" contenteditable="true">Politécnico Salesiano Cristo Rey — Docente Titular y Tutor</div>
+                                <p class="cv-desc" contenteditable="true">Docente de Desarrollo y Administración de Aplicaciones Informáticas en 5to y 6to de Secundaria.</p>
+                            </div>
+
+                            <div class="cv-item">
+                                <button type="button" class="btn-delete-item" onclick="eliminarItem(this)" title="Eliminar bloque"><i class="bi bi-x-lg"></i></button>
+                                <div class="cv-year" contenteditable="true">2022 – 2024</div>
+                                <div class="cv-place" contenteditable="true">Centro Tecnológico Comunitario — Instructor Técnico</div>
+                                <p class="cv-desc" contenteditable="true">Profesor de programación web (HTML, CSS, JS), diseño de bases de datos SQL y soporte técnico.</p>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-add-item" onclick="agregarItem('listaExperiencia', 'Año inicio – Año fin', 'Nombre del Centro Educativo o Empresa — Cargo', 'Funciones desempeñadas y asignaturas impartidas.')">
+                            <i class="bi bi-plus-circle-fill"></i> Añadir experiencia
+                        </button>
+                    </div>
+
+                    <!-- SECCIÓN 4: IDIOMAS E INFORMÁTICA -->
+                    <div class="cv-section-block">
+                        <div class="row g-4">
+                            <!-- Sub-columna Idiomas -->
+                            <div class="col-md-6">
+                                <div class="cv-section-header">
+                                    <h4 class="cv-section-title" style="font-size: 1rem;" contenteditable="true">IDIOMAS</h4>
+                                    <span class="header-dots" style="margin: 0 8px;">• • •</span>
+                                    <i class="bi bi-globe2 header-icon" style="font-size: 1.25rem;"></i>
+                                </div>
+                                <div id="listaIdiomas">
+                                    <div class="cv-item">
+                                        <button type="button" class="btn-delete-item" onclick="eliminarItem(this)" title="Eliminar"><i class="bi bi-x-lg"></i></button>
+                                        <div class="cv-place" contenteditable="true">Español – Nativo</div>
+                                        <p class="cv-desc" contenteditable="true">Inglés Técnico – Nivel B2</p>
+                                        <p class="cv-desc" contenteditable="true">Mandarín Básico – Nivel A1</p>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-add-item" onclick="agregarHabilidad('listaIdiomas', 'Nuevo Idioma – Nivel')">
+                                    <i class="bi bi-plus-circle-fill"></i> Añadir idioma
+                                </button>
+                            </div>
+
+                            <!-- Sub-columna Informática -->
+                            <div class="col-md-6">
+                                <div class="cv-section-header">
+                                    <h4 class="cv-section-title" style="font-size: 1rem;" contenteditable="true">INFORMÁTICA</h4>
+                                    <span class="header-dots" style="margin: 0 8px;">• • •</span>
+                                    <i class="bi bi-laptop header-icon" style="font-size: 1.25rem;"></i>
+                                </div>
+                                <div id="listaInformatica">
+                                    <div class="cv-item">
+                                        <button type="button" class="btn-delete-item" onclick="eliminarItem(this)" title="Eliminar"><i class="bi bi-x-lg"></i></button>
+                                        <div class="cv-place" contenteditable="true">C#, SQL Server & Git</div>
+                                        <p class="cv-desc" contenteditable="true">HTML5, CSS3, Bootstrap & JS</p>
+                                        <p class="cv-desc" contenteditable="true">TIC aplicadas a la educación</p>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn-add-item" onclick="agregarHabilidad('listaInformatica', 'Nueva Herramienta o Lenguaje')">
+                                    <i class="bi bi-plus-circle-fill"></i> Añadir competencia
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMACIÓN -->
+    <div class="modal fade" id="guardarCVModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fs-6">Currículum Actualizado</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <i class="bi bi-check-circle-fill text-success display-4 mb-2"></i>
+                    <p class="small text-muted mb-0">Todos los textos, secciones y la fotografía del Currículum Vitae se han guardado correctamente.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-institutional btn-sm w-100" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script para edición completa, carga de fotos desde archivos y guardado local -->
+    <script>
+        const inputFoto = document.getElementById('inputFotoArchivo');
+        const imgFoto = document.getElementById('fotoDocente');
+        const hojaCV = document.getElementById('hojaCV');
+        const btnToggle = document.getElementById('btnToggleEdicion');
+
+        // 1. Abrir el explorador de archivos / galería al tocar la foto o el botón
+        function abrirSelectorFoto() {
+            inputFoto.click();
+        }
+
+        // 2. Procesar la imagen seleccionada y mostrarla de inmediato en el círculo
+        inputFoto.addEventListener('change', function(event) {
+            const archivo = event.target.files[0];
+            if (archivo) {
+                const lector = new FileReader();
+                lector.onload = function(e) {
+                    imgFoto.src = e.target.result;
+                    localStorage.setItem('cv_foto_docente', e.target.result);
+                };
+                lector.readAsDataURL(archivo);
+            }
+        });
+
+        // 3. Activar/Resaltar todos los campos editables con el botón superior
+        function activarModoEdicionTotal() {
+            hojaCV.classList.toggle('editing-active');
+            btnToggle.classList.toggle('active-mode');
+
+            if (hojaCV.classList.contains('editing-active')) {
+                btnToggle.innerHTML = '<i class="bi bi-check2-all me-1"></i> Modo Edición Total Activo (Haz clic en cualquier texto o en la foto)';
+                document.getElementById('editNombre').focus();
+            } else {
+                btnToggle.innerHTML = '<i class="bi bi-pencil-fill me-1"></i> Haz clic sobre cualquier texto del CV para editarlo directamente';
+            }
+        }
+
+        // 4. Añadir nuevos bloques a Formación, Cursos o Experiencia
+        function agregarItem(idLista, anio, lugar, desc) {
+            const contenedor = document.getElementById(idLista);
+            const nuevoDiv = document.createElement('div');
+            nuevoDiv.className = 'cv-item';
+            nuevoDiv.innerHTML = `
+                <button type="button" class="btn-delete-item" onclick="eliminarItem(this)" title="Eliminar bloque"><i class="bi bi-x-lg"></i></button>
+                <div class="cv-year" contenteditable="true">${anio}</div>
+                <div class="cv-place" contenteditable="true">${lugar}</div>
+                <p class="cv-desc" contenteditable="true">${desc}</p>
+            `;
+            contenedor.appendChild(nuevoDiv);
+            nuevoDiv.querySelector('.cv-year').focus();
+        }
+
+        // 5. Añadir nuevos bloques a Idiomas o Informática
+        function agregarHabilidad(idLista, titulo) {
+            const contenedor = document.getElementById(idLista);
+            const nuevoDiv = document.createElement('div');
+            nuevoDiv.className = 'cv-item';
+            nuevoDiv.innerHTML = `
+                <button type="button" class="btn-delete-item" onclick="eliminarItem(this)" title="Eliminar"><i class="bi bi-x-lg"></i></button>
+                <div class="cv-place" contenteditable="true">${titulo}</div>
+                <p class="cv-desc" contenteditable="true">Detalle o nivel de dominio</p>
+            `;
+            contenedor.appendChild(nuevoDiv);
+            nuevoDiv.querySelector('.cv-place').focus();
+        }
+
+        // 6. Eliminar cualquier bloque
+        function eliminarItem(boton) {
+            const item = boton.closest('.cv-item');
+            if (item) {
+                item.remove();
+            }
+        }
+
+        // 7. Guardar todos los cambios del CV y la foto en el navegador
+        function guardarTodoElCV() {
+            hojaCV.classList.remove('editing-active');
+            btnToggle.classList.remove('active-mode');
+            btnToggle.innerHTML = '<i class="bi bi-pencil-fill me-1"></i> Haz clic sobre cualquier texto del CV para editarlo directamente';
+
+            localStorage.setItem('cv_contenido_guardado', hojaCV.innerHTML);
+            
+            const modal = new bootstrap.Modal(document.getElementById('guardarCVModal'));
+            modal.show();
+        }
+
+        // 8. Cargar datos guardados previamente al abrir la página
+        window.addEventListener('DOMContentLoaded', () => {
+            const contenidoGuardado = localStorage.getItem('cv_contenido_guardado');
+            if (contenidoGuardado) {
+                hojaCV.innerHTML = contenidoGuardado;
+            }
+            const fotoGuardada = localStorage.getItem('cv_foto_docente');
+            if (fotoGuardada) {
+                const fotoActual = document.getElementById('fotoDocente');
+                if (fotoActual) fotoActual.src = fotoGuardada;
+            }
+        });
+    </script>
+</body>
+</html>
